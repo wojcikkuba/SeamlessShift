@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  database:
+    image: database
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+    # volumes:
+    #   - ./db/seamless_shift_dev.sql:/docker-entrypoint-initdb.d/seamless_shift_dev.sql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "--password=password",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql+pymysql://root:password@database/shift_db?charset=utf8mb4"
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+    # volumes:
+    #   - ./backend:/app
+
+  #frontend:
+  #  image: now-ui-dashboard-react
+  #  build:
+  #    context: ./frontend
+  #    dockerfile: Dockerfile
+  #  ports:
+  #    - "3000:3000"
+  #  deploy:
+  #    resources:
+  #      limits:
+  #        cpus: "1"
+  #        memory: 512M
+  #  depends_on:
+  #    - backend

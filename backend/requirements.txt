@@ -1,0 +1,10 @@
+flask == 2.3.3
+flask-smorest
+flask-sqlalchemy
+flask-jwt-extended
+flask_cors
+python-dotenv
+passlib
+sqlalchemy
+marshmallow
+pymysql
