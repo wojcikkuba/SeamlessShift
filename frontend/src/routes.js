@@ -2,8 +2,8 @@ import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
 import Typography from "views/Typography.js";
-import TableList from "views/TableList.js";
 import UserPage from "views/UserPage.js";
+import MyClasses from "views/MyClasses.js";
 
 var dashRoutes = [
   {
@@ -35,10 +35,10 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
-    path: "/extended-tables",
-    name: "Table List",
+    path: "/my-classes",
+    name: "Moje zajęcia",
     icon: "files_paper",
-    component: <TableList />,
+    component: <MyClasses />,
     layout: "/admin",
   },
   {

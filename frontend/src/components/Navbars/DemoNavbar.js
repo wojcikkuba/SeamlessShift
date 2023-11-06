@@ -135,7 +135,7 @@ function DemoNavbar(props) {
 
               <DropdownMenu right>
                 <DropdownItem tag={Link} to="/admin/user-page">Moje konto</DropdownItem>
-                <DropdownItem className="bg-danger" onClick={null}>Wyloguj</DropdownItem>
+                <DropdownItem tag={Link} className="logout-button"  onClick={null}>Wyloguj</DropdownItem>
               </DropdownMenu>
             </Dropdown>
 
