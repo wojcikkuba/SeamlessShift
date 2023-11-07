@@ -31,10 +31,12 @@ class AuthService {
         });
     }
 
-    static logout() {
+    static logout(history) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // You may need to navigate the user to the login page after this.
+        if(history) {
+            history.push('/login');
+        }
     }
 }
 

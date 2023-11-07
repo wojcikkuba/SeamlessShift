@@ -1,26 +1,19 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Container,
-} from "reactstrap";
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Container, } 
+  from "reactstrap";
 
 import routes from "routes.js";
+import AuthService from "services/AuthService";
 
 function DemoNavbar(props) {
+  
   const location = useLocation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
   const sidebarToggle = React.useRef();
+  
   const toggle = () => {
     if (isOpen) {
       setColor("transparent");
@@ -29,9 +22,11 @@ function DemoNavbar(props) {
     }
     setIsOpen(!isOpen);
   };
+  
   const dropdownToggle = (e) => {
     setDropdownOpen(!dropdownOpen);
   };
+  
   const getBrand = () => {
     var name;
     routes.map((prop, key) => {
@@ -57,10 +52,12 @@ function DemoNavbar(props) {
     });
     return name;
   };
+  
   const openSidebar = () => {
     document.documentElement.classList.toggle("nav-open");
     sidebarToggle.current.classList.toggle("toggled");
   };
+  
   // function that adds color white/transparent to the navbar on resize (this is for the collapse)
   const updateColor = () => {
     if (window.innerWidth < 993 && isOpen) {
@@ -69,9 +66,15 @@ function DemoNavbar(props) {
       setColor("transparent");
     }
   };
+
+  const handleLogoutClick = () => {
+    AuthService.logout();
+  }
+  
   React.useEffect(() => {
     window.addEventListener("resize", updateColor);
   }, []);
+  
   React.useEffect(() => {
     if (
       window.innerWidth < 993 &&
@@ -81,6 +84,7 @@ function DemoNavbar(props) {
       sidebarToggle.current.classList.toggle("toggled");
     }
   }, [location]);
+  
   return (
     // add or remove classes depending if we are on full-screen-maps page or not
     <Navbar
@@ -135,7 +139,7 @@ function DemoNavbar(props) {
 
               <DropdownMenu right>
                 <DropdownItem tag={Link} to="/admin/user-page">Moje konto</DropdownItem>
-                <DropdownItem tag={Link} className="logout-button"  onClick={null}>Wyloguj</DropdownItem>
+                <DropdownItem tag={Link} to='/login' className="logout-button" onClick={handleLogoutClick}>Wyloguj</DropdownItem>
               </DropdownMenu>
             </Dropdown>
 
