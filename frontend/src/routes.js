@@ -1,7 +1,7 @@
 import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
-import Typography from "views/Typography.js";
+import Schedule from "views/Schedule";
 import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
 
@@ -42,10 +42,10 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
-    path: "/typography",
-    name: "Typography",
-    icon: "design-2_ruler-pencil",
-    component: <Typography />,
+    path: "/schedule",
+    name: "Plany zajęć",
+    icon: "ui-1_calendar-60",
+    component: <Schedule />,
     layout: "/admin",
   },
 ];
