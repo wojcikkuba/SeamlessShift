@@ -16,28 +16,6 @@ import {
 
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
-/*
-const thead = ["Godzina rozpoczęcia", "Godzina zakończenia", "Przedmiot", "Sala", "Typ", "Opis", "Zastępstwo"];
-
-const tbody = [
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-];
-*/
-
 function MyClasses() {
 
     let headers = new Headers();
@@ -48,37 +26,39 @@ function MyClasses() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
+    const [noData, setNoData] = useState(true);
 
     const fetchSubjects = async (userId, date) => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('No token found in local storage');
-            }
-
             const response = await fetch(`http://localhost:5000/subject/${userId}/${date}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Add 'Bearer' prefix to the token value
+                    'Authorization': `Bearer ${token}`,
                 }
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            setTableData(data);
-            setIsLoading(false);
+
+            if (Array.isArray(data) && data.length === 0) {
+                setNoData(true);
+            } else {
+                setTableData(data);
+                setNoData(false);
+            }
+
         } catch (error) {
-            console.error('Błąd pobierania danych z API:', error);
-            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
         if (selectedDate) {
-            const selectedDate = '2023-11-17' // TEST
-            const userId = 1; // TEST
+            const userData = JSON.parse(localStorage.getItem('user'));
+            const userId = userData.id;
             fetchSubjects(userId, selectedDate);
         }
     }, [selectedDate]);
@@ -109,7 +89,9 @@ function MyClasses() {
                                 />
 
                                 {selectedDate && isLoading ? (
-                                    <Spinner color="primary" /> // Pokazuje Spinner tylko po wybraniu daty i podczas ładowania danych
+                                    <Spinner color="primary" />
+                                ) : selectedDate && noData ? (
+                                    <p className="text-info h4 text-center">Brak zajęć w danym dniu</p>
                                 ) : selectedDate ? (
                                     <Table responsive bordered>
                                         <thead className="text-primary">
