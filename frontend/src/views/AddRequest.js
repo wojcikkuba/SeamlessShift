@@ -27,6 +27,7 @@ function AddRequest() {
     const [subjects, setSubjects] = useState([]);
     const [comment, setComment] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
         setSelectedDate(initialDate || "");
@@ -79,11 +80,55 @@ function AddRequest() {
         setComment(comment);
     };
 
-    const handleAddRequest = () => {
+    const handleAddRequest = async () => {
         if (selectedSubjects.length > 0) {
-            // Tutaj wykonaj odpowiednie działania po naciśnięciu przycisku "Dodaj prośbę"
-            // Możesz użyć stanów selectedDate, selectedSubjects oraz comment do przesłania danych do API lub do wykonania innych działań.
-            console.log("Dodaj prośbę:", selectedDate, selectedSubjects, comment);
+            setIsLoading(true);
+            try {
+                const token = localStorage.getItem('token');
+                const userId = JSON.parse(localStorage.getItem('user')).id;
+                const issueDate = new Date().toISOString();
+                const subjectId = selectedSubjects[0]; // jesli tylko jeden
+                const formattedDate = new Date(selectedDate).toISOString();
+                const body = JSON.stringify({
+                    issue_date: issueDate,
+                    comment: comment,
+                    subject_id: subjectId,
+                    user_id: userId,
+                    date: formattedDate,
+                });
+
+                const response = await fetch("http://localhost:5000/request", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: body,
+                });
+
+                if (response.ok) {
+                    console.log("Prośba została dodana pomyślnie.");
+                } else {
+                    console.error("Dodawanie prośby nie powiodło się. Spróbuj ponownie później.");
+                }
+            } catch (error) {
+                console.error('Błąd podczas komunikacji z API:', error);
+            } finally {
+                setIsLoading(false);
+            }
+
+            try {
+                // Po udanym dodaniu ogłoszenia ustaw komunikat sukcesu
+                setSuccessMessage("Prośba została pomyślnie dodana!");
+
+                // Wyczyść formularz lub wykonaj inne działania, jeśli to konieczne
+                setSelectedDate("");
+                setSelectedSubjects([]);
+                setComment("");
+            } catch (error) {
+                // Obsłuż błąd, jeśli wystąpi podczas dodawania ogłoszenia
+                console.error("Błąd podczas dodawania prośby:", error);
+            }
         } else {
             console.log("Wybierz przynajmniej jeden przedmiot przed dodaniem prośby.");
         }
@@ -148,6 +193,7 @@ function AddRequest() {
                                 <Button color="primary" onClick={handleAddRequest} disabled={selectedSubjects.length === 0}>
                                     Dodaj Prośbę
                                 </Button>
+                                {successMessage && <p className="text-info h4 text-center">{successMessage}</p>}
                             </CardBody>
                         </Card>
                     </Col>
