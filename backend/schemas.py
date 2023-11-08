@@ -84,6 +84,25 @@ class SubjectSchema(PlainSubjectSchema):
             return 8
 
 
+class RequestSchema(Schema):
+    id = fields.Int(dump_only=True)
+    comment = fields.Str()
+    issue_date = fields.DateTime(required=True)
+    date = fields.DateTime(required=True)
+    user_id = fields.Int(required=True)
+    subject_id = fields.Int(required=True)
+    user = fields.Nested(PlainUserSchema(), dump_only=True)
+    subject = fields.Nested(PlainSubjectSchema(), dump_only=True)
+
+
+class RequestUpdateSchema(Schema):
+    comment = fields.Str()
+    issue_date = fields.DateTime()
+    date = fields.DateTime()
+    user_id = fields.Int()
+    subject_id = fields.Int()
+
+
 class UserUpdateSchema(Schema):
     password = fields.Str()
     firstName = fields.Str()
@@ -118,8 +137,10 @@ class FacilitySchema(PlainFacilitySchema):
 
 
 class CourseSchema(PlainCourseSchema):
-    subjects = fields.List(fields.Nested(PlainSubjectSchema()), dump_only=True) # do we need it ?
+    subjects = fields.List(fields.Nested(
+        PlainSubjectSchema()), dump_only=True)  # do we need it ?
 
 
 class SubjectTypeSchema(PlainSubjectTypeSchema):
-    subjects = fields.List(fields.Nested(PlainSubjectSchema()), dump_only=True) # do we need it ?
+    subjects = fields.List(fields.Nested(
+        PlainSubjectSchema()), dump_only=True)  # do we need it ?

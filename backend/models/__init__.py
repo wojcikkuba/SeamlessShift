@@ -4,3 +4,4 @@ from models.role import RoleModel
 from models.subject import SubjectModel
 from models.subject_type import SubjectTypeModel
 from models.course import CourseModel
+from models.request import RequestModel

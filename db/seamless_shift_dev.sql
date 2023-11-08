@@ -95,6 +95,30 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`subject` (
   CONSTRAINT `fk_subject_subject_type1` FOREIGN KEY (`subject_type_id`) REFERENCES `shift_db`.`subject_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION, 
   CONSTRAINT `fk_subject_course1` FOREIGN KEY (`course_id`) REFERENCES `shift_db`.`course` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `shift_db`.`request`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `shift_db`.`request` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `issue_date` DATETIME NOT NULL,
+  `comment` VARCHAR(150) NULL,
+  `subject_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `date` DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_request_subject1_idx` (`subject_id` ASC) VISIBLE,
+  INDEX `fk_request_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_request_subject1`
+    FOREIGN KEY (`subject_id`)
+    REFERENCES `shift_db`.`subject` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_request_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `shift_db`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 -- Inserting roles
 INSERT INTO shift_db.role (id, name) 
 VALUES 
@@ -176,6 +200,15 @@ VALUES
     '14:30:00', 'Room 303', 3, '2023-11-01', 
     '2023-12-15', 3, 3
   );
+-- Inserting requests
+INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`) 
+VALUES ('2023-11-08 08:30:00', 'Request for shift change due to appointment', 1, 1, '2023-11-15 08:00:00');
+
+INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`) 
+VALUES ('2023-11-08 09:00:00', 'Need day off for personal reasons', 2, 2, '2023-11-20 09:00:00');
+
+INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`) 
+VALUES ('2023-11-08 09:30:00', 'Requesting shift swap with colleague', 3, 3, '2023-11-22 16:00:00');
 SET 
   SQL_MODE = @OLD_SQL_MODE;
 SET 

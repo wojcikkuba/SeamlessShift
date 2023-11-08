@@ -28,3 +28,4 @@ class SubjectModel(db.Model):
     course = db.relationship("CourseModel", back_populates="subjects")
     subject_type = db.relationship(
         "SubjectTypeModel", back_populates="subjects")
+    requests = db.relationship("RequestModel", back_populates="subject", lazy='dynamic')
