@@ -43,7 +43,6 @@ function Schedule() {
                 console.error('Błąd pobierania danych z API:', error);
             }
         };
-
         fetchUsers();
     }, []);
 
@@ -108,10 +107,10 @@ function Schedule() {
                                             id="exampleUser"
                                             onChange={handleUserChange}
                                         >
-                                            <option value="">Wybierz użytkownika</option>
+                                            <option value="" disabled>Wybierz użytkownika</option>
                                             {users.map((user) => (
                                                 <option key={user.id} value={user.id}>
-                                                    {user.firstName} {user.lastName}
+                                                    {user.firstName} {user.lastName} ({user.email})
                                                 </option>
                                             ))}
                                         </Input>
