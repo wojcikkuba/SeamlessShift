@@ -5,13 +5,14 @@ import Schedule from "views/Schedule";
 import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
 import AddRequest from "views/AddRequest";
+import CurrentRequests from "views/CurrentRequests";
 
 var dashRoutes = [
   {
-    path: "/dashboard",
-    name: "Dashboard",
-    icon: "design_app",
-    component: <Dashboard />,
+    path: "/current-requests",
+    name: "Przeglądaj ogłoszenia",
+    icon: "files_single-copy-04",
+    component: <CurrentRequests />,
     layout: "/admin",
   },
   {
@@ -19,6 +20,28 @@ var dashRoutes = [
     name: "Dodaj ogłoszenie",
     icon: "ui-1_simple-add",
     component: <AddRequest />,
+    layout: "/admin",
+  },
+  {
+    path: "/my-classes",
+    name: "Moje zajęcia",
+    icon: "files_paper",
+    component: <MyClasses />,
+    layout: "/admin",
+  },
+  {
+    path: "/schedule",
+    name: "Plany zajęć",
+    icon: "ui-1_calendar-60",
+    component: <Schedule />,
+    layout: "/admin",
+  },
+  {
+    //path: "/dashboard",
+    path: '#',
+    name: "Dashboard",
+    icon: "design_app",
+    component: <Dashboard />,
     layout: "/admin",
   },
   {
@@ -42,19 +65,6 @@ var dashRoutes = [
     component: <UserPage />,
     layout: "/admin",
   },
-  {
-    path: "/my-classes",
-    name: "Moje zajęcia",
-    icon: "files_paper",
-    component: <MyClasses />,
-    layout: "/admin",
-  },
-  {
-    path: "/schedule",
-    name: "Plany zajęć",
-    icon: "ui-1_calendar-60",
-    component: <Schedule />,
-    layout: "/admin",
-  },
+  
 ];
 export default dashRoutes;
