@@ -4,6 +4,7 @@ import Icons from "views/Icons.js";
 import Schedule from "views/Schedule";
 import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
+import AddRequest from "views/AddRequest";
 
 var dashRoutes = [
   {
@@ -11,6 +12,13 @@ var dashRoutes = [
     name: "Dashboard",
     icon: "design_app",
     component: <Dashboard />,
+    layout: "/admin",
+  },
+  {
+    path: "/add-request",
+    name: "Dodaj ogłoszenie",
+    icon: "ui-1_simple-add",
+    component: <AddRequest />,
     layout: "/admin",
   },
   {
