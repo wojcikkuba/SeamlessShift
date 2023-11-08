@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
     Card,
     CardBody,
@@ -16,11 +17,21 @@ import {
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function AddRequest() {
-    const [selectedDate, setSelectedDate] = useState("");
-    const [selectedSubjects, setSelectedSubjects] = useState([]);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const initialDate = searchParams.get("date");
+    const initialSubjectId = searchParams.get("subjectId")
+
+    const [selectedDate, setSelectedDate] = useState(initialDate || "");
+    const [selectedSubjects, setSelectedSubjects] = useState(initialSubjectId ? [initialSubjectId] : []);
     const [subjects, setSubjects] = useState([]);
     const [comment, setComment] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        setSelectedDate(initialDate || "");
+        setSelectedSubjects(initialSubjectId ? [initialSubjectId] : []);
+    }, [initialDate, initialSubjectId]);
 
     const fetchUserSubjectsForDate = async (userId, date) => {
         setIsLoading(true);
@@ -57,7 +68,6 @@ function AddRequest() {
         setSelectedDate(selectedDate);
         setSelectedSubjects([]); // Usuń wybrane przedmioty po zmianie daty
     };
-
 
     const handleSubjectChange = (e) => {
         const selectedOptionValues = Array.from(e.target.selectedOptions, (option) => option.value);
@@ -97,6 +107,7 @@ function AddRequest() {
                                         name="date"
                                         placeholder="Wybierz datę"
                                         type="date"
+                                        value={selectedDate}
                                         onChange={handleDateChange}
                                     />
                                 </FormGroup>
@@ -112,6 +123,7 @@ function AddRequest() {
                                             name="subjects"
                                             type="select"
                                             multiple
+                                            value={selectedSubjects}
                                             onChange={handleSubjectChange}
                                         >
                                             {subjects.map((subject) => (
@@ -129,6 +141,7 @@ function AddRequest() {
                                         name="comment"
                                         placeholder="Dodaj komentarz"
                                         type="textarea"
+                                        value={comment}
                                         onChange={handleCommentChange}
                                     />
                                 </FormGroup>

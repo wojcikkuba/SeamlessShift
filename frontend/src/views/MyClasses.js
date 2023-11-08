@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import {
     Card,
     CardBody,
@@ -102,6 +102,7 @@ function MyClasses() {
                                                 <th>Sala</th>
                                                 <th>Typ</th>
                                                 <th>Opis</th>
+                                                <th className="text-center">Zastępstwo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -113,6 +114,16 @@ function MyClasses() {
                                                     <td>{row.classroom}</td>
                                                     <td>{row.subject_type.type}</td>
                                                     <td>{row.course.name}</td>
+                                                    <td className="text-center" >
+                                                        <Link
+                                                            to={{
+                                                                pathname: "/admin/add-request",
+                                                                search: `?date=${selectedDate}&subjectId=${row.id}`,
+                                                            }}
+                                                        >
+                                                            <Button color="primary">Dodaj</Button>
+                                                        </Link>
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
