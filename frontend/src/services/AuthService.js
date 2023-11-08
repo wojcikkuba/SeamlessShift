@@ -33,12 +33,9 @@ class AuthService {
         });
     }
 
-    static logout(history) {
+    static logout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        if(history) {
-            history.push('/login');
-        }
     }
 }
 
