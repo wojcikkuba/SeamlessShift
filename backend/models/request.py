@@ -9,7 +9,7 @@ class RequestModel(db.Model):
                            unique=False, nullable=False)
     comment = db.Column('comment', db.String(
         150), unique=False, nullable=True)
-    date = db.Column('date', db.DateTime, unique=False, nullable=False)
+    date = db.Column('date', db.Date, unique=False, nullable=False)
 
     # Foreign keys
     user_id = db.Column('user_id', db.Integer, db.ForeignKey(

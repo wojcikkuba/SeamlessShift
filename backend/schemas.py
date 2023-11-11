@@ -88,7 +88,7 @@ class RequestSchema(Schema):
     id = fields.Int(dump_only=True)
     comment = fields.Str()
     issue_date = fields.DateTime(required=True)
-    date = fields.DateTime(required=True)
+    date = fields.Date(required=True)
     user_id = fields.Int(required=True)
     subject_id = fields.Int(required=True)
     user = fields.Nested(PlainUserSchema(), dump_only=True)
@@ -98,7 +98,7 @@ class RequestSchema(Schema):
 class RequestUpdateSchema(Schema):
     comment = fields.Str()
     issue_date = fields.DateTime()
-    date = fields.DateTime()
+    date = fields.Date()
     user_id = fields.Int()
     subject_id = fields.Int()
 
