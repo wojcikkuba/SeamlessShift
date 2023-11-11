@@ -84,6 +84,13 @@ class SubjectSchema(PlainSubjectSchema):
             return 8
 
 
+class RequestUserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    email = fields.Str(required=True)
+    firstName = fields.Str(required=True)
+    lastName = fields.Str(required=True)
+
+
 class RequestSchema(Schema):
     id = fields.Int(dump_only=True)
     comment = fields.Str()
@@ -91,7 +98,7 @@ class RequestSchema(Schema):
     date = fields.Date(required=True)
     user_id = fields.Int(required=True)
     subject_id = fields.Int(required=True)
-    user = fields.Nested(PlainUserSchema(), dump_only=True)
+    user = fields.Nested(RequestUserSchema(), dump_only=True)
     subject = fields.Nested(PlainSubjectSchema(), dump_only=True)
 
 
