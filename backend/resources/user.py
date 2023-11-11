@@ -16,7 +16,8 @@ class UserLogin(MethodView):
     @blp.arguments(PlainUserSchema)
     def post(self, user_data):
         user = UserModel.query.filter(
-            UserModel.email == user_data["email"]
+            UserModel.email == user_data["email"],
+            UserModel.deleted == False
         ).first()
 
         user_schema = UserSchema()  # Change to blp.response
