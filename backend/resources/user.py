@@ -1,10 +1,11 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from passlib.hash import pbkdf2_sha256
 
 from db import db
+from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import PlainUserSchema, UserSchema, UserUpdateSchema
 
@@ -27,6 +28,15 @@ class UserLogin(MethodView):
             return {"token": access_token, "user": user_schema.dump(user)}
 
         abort(401, message="Niepoprawne dane logowania")
+
+
+@blp.route("/logout")
+class UserLogout(MethodView):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        BLOCKLIST.add(jti)
+        return {"message": "Successfully logged out."}
 
 
 @blp.route("/user")
