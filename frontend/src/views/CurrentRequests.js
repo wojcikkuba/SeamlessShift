@@ -19,6 +19,8 @@ function CurrentRequests() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
     const token = localStorage.getItem('token');
+    const userId = JSON.parse(localStorage.getItem('user')).id;
+
     useEffect(() => {
         fetch("http://localhost:5000/request", {
             headers: {
@@ -31,6 +33,10 @@ function CurrentRequests() {
            .catch((error) => console.error("Błąd pobierania danych z API:", error));
     }, []);
 
+    const isUserRequest = (request) => {
+        return request.user.id === userId;
+    }
+
     const indexOfLastRequest = currentPage * itemsPerPage;
     const indexOfFirstRequest = indexOfLastRequest - itemsPerPage;
     const currentRequests = requests.slice(indexOfFirstRequest, indexOfLastRequest);
@@ -38,6 +44,14 @@ function CurrentRequests() {
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
+
+    const formatTime = (timeString) => {
+        const date = new Date(`1970-01-01T${timeString}`);
+        const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return formattedTime;
+    };
+
+    //const handleApplyRequest = async (request) => {}
 
     return (
         <>
@@ -56,11 +70,14 @@ function CurrentRequests() {
                                             <Col key={request.id} md={6}>
                                                 <Card >
                                                     <CardBody>
-                                                        <p><b>Użytkownik:</b> {request.user.firstName} {request.user.lastName}</p>
-                                                        <p><b>Komentarz:</b> {request.comment}</p>
-                                                        <p><b>Przedmiot:</b> {request.subject.id}</p>
                                                         <p><b>Data:</b> {request.date}</p>
-                                                        <Button color="primary" className="mb-15">Zgłoś się</Button>
+                                                        <p><b>Prowadzący:</b> {request.user.firstName} {request.user.lastName}</p>
+                                                        <p><b>Przedmiot:</b> {request.subject.course.name}</p>
+                                                        <p><b>Godzina:</b> {formatTime(request.subject.start)} - {formatTime(request.subject.end)}</p>
+                                                        <p><b>Komentarz:</b> {request.comment}</p>
+                                                        <Button color="primary" className="mb-15" disabled={isUserRequest(request)}>
+                                                            Zgłoś się
+                                                        </Button>
                                                     </CardBody>
                                                 </Card>
                                             </Col>
