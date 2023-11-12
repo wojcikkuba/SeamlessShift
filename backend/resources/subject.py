@@ -92,8 +92,11 @@ class Subject(MethodView):
     @jwt_required()
     def delete(self, subject_id):
         subject = SubjectModel.query.get_or_404(subject_id)
-        db.session.delete(subject)
-        db.session.commit()
+        try:
+            db.session.delete(subject)
+            db.session.commit()
+        except IntegrityError:
+            abort(400, message="Cannot delete subject with requests assigned to it.")
         return {"message": "Subject deleted"}
 
 
