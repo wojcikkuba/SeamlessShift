@@ -17,9 +17,9 @@ class AuthService {
     static login(email, password) {
         return fetch('http://localhost:5000/login', {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
-             },
+            },
             body: JSON.stringify({ email, password }),
         }).then(async (response) => {
             if (response.ok) {
@@ -34,6 +34,24 @@ class AuthService {
     }
 
     static logout() {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Logged out successfully');
+                } else {
+                    console.error('Logout failed');
+                }
+            }).catch(error => {
+                console.error('Error during logout:', error);
+            });
+        }
         localStorage.removeItem('token');
         localStorage.removeItem('user');
     }
