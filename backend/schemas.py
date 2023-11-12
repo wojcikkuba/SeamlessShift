@@ -38,6 +38,7 @@ class PlainSubjectSchema(Schema):
     end_day = fields.Date(required=True)
     user_id = fields.Int(required=True)
     course_id = fields.Int(required=True)
+    course = fields.Nested(PlainCourseSchema(), dump_only=True)
     subject_type_id = fields.Int(required=True)
 
 
@@ -60,7 +61,6 @@ class UserSchema(PlainUserSchema):
 class SubjectSchema(PlainSubjectSchema):
     key = fields.Method("get_time_key", dump_only=True)
     user = fields.Nested(PlainUserSchema(), dump_only=True)
-    course = fields.Nested(PlainCourseSchema(), dump_only=True)
     subject_type = fields.Nested(PlainSubjectTypeSchema(), dump_only=True)
 
     def get_time_key(self, obj):
