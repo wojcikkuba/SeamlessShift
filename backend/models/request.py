@@ -10,6 +10,7 @@ class RequestModel(db.Model):
     comment = db.Column('comment', db.String(
         150), unique=False, nullable=True)
     date = db.Column('date', db.Date, unique=False, nullable=False)
+    status = db.Column('status', db.String, unique=False, nullable=False)
 
     # Foreign keys
     user_id = db.Column('user_id', db.Integer, db.ForeignKey(

@@ -98,6 +98,7 @@ class RequestSchema(Schema):
     date = fields.Date(required=True)
     user_id = fields.Int(required=True)
     subject_id = fields.Int(required=True)
+    status = fields.Str(required=True)
     user = fields.Nested(RequestUserSchema(), dump_only=True)
     subject = fields.Nested(PlainSubjectSchema(), dump_only=True)
 
@@ -108,6 +109,7 @@ class RequestUpdateSchema(Schema):
     date = fields.Date()
     user_id = fields.Int()
     subject_id = fields.Int()
+    status = fields.Str()
 
 
 class UserUpdateSchema(Schema):

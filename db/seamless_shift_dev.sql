@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`request` (
   `subject_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   `date` DATE NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_request_subject1_idx` (`subject_id` ASC) VISIBLE,
   INDEX `fk_request_user1_idx` (`user_id` ASC) VISIBLE,
@@ -201,14 +202,14 @@ VALUES
     '2023-12-15', 3, 3
   );
 -- Inserting requests
-INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`) 
-VALUES ('2023-11-08 08:30:00', 'Request for shift change due to appointment', 1, 1, '2023-11-15 08:00:00');
+INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`, `status`) 
+VALUES ('2023-11-08 08:30:00', 'Request for shift change due to appointment', 1, 1, '2023-11-15 08:00:00', 'Requested');
 
-INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`) 
-VALUES ('2023-11-08 09:00:00', 'Need day off for personal reasons', 2, 2, '2023-11-20 09:00:00');
+INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`, `status`) 
+VALUES ('2023-11-08 09:00:00', 'Need day off for personal reasons', 2, 2, '2023-11-20 09:00:00', 'Requested');
 
-INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`) 
-VALUES ('2023-11-08 09:30:00', 'Requesting shift swap with colleague', 3, 3, '2023-11-22 16:00:00');
+INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`, `status`) 
+VALUES ('2023-11-08 09:30:00', 'Requesting shift swap with colleague', 3, 3, '2023-11-22 16:00:00', 'Requested');
 SET 
   SQL_MODE = @OLD_SQL_MODE;
 SET 
