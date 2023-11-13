@@ -12,6 +12,7 @@ import {
     Input,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import * as XLSX from 'xlsx';
 
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
@@ -99,6 +100,23 @@ function ManageUsers() {
         return sortableData;
     };
 
+    const exportToExcel = () => {
+        const processedData = tableData.map(user => {
+            const { deleted, facility_id, role_id, password_change_required, ...rest } = user;
+            return {
+                ...rest,
+                facility: user.facility.name,
+                role: user.role.name,
+            };
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(processedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+        XLSX.writeFile(workbook, 'users_list.xlsx');
+    };
+
     return (
         <>
             <PanelHeader size="sm" />
@@ -172,9 +190,11 @@ function ManageUsers() {
                                                     <td>{row.role.name}</td>
                                                     <td className="text-center">
                                                         <Button color="danger">Usuń</Button>
-                                                        <Button color="info" className="ml-2">
-                                                            Edytuj
-                                                        </Button>
+                                                        {/*<Link to="/admin/edit-user">*/}
+                                                            <Button color="info" className="ml-2">
+                                                                Edytuj
+                                                            </Button>
+                                                        {/*</Link>*/}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -182,10 +202,12 @@ function ManageUsers() {
                                     </Table>
                                 )}
                                 <Row>
-                                    <Button color="primary" className="ml-3">
-                                        Dodaj użytkownika
-                                    </Button>
-                                    <Button color="primary" className="ml-2">
+                                    <Link to="/admin/add-user">
+                                        <Button color="primary" className="ml-3">
+                                            Dodaj użytkownika
+                                        </Button>
+                                    </Link>
+                                    <Button color="primary" className="ml-2" onClick={exportToExcel}>
                                         Pobierz listę
                                     </Button>
                                     <Button
