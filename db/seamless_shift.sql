@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`request` (
   `subject_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   `date` DATE NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_request_subject1_idx` (`subject_id` ASC) VISIBLE,
   INDEX `fk_request_user1_idx` (`user_id` ASC) VISIBLE,
