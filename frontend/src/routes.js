@@ -6,6 +6,7 @@ import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
 import AddRequest from "views/AddRequest";
 import CurrentRequests from "views/CurrentRequests";
+import ManageUsers from "views/ManageUsers";
 
 var dashRoutes = [
   {
@@ -37,6 +38,13 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
+    path: "/user-page",
+    name: "Moje konto",
+    icon: "users_single-02",
+    component: <UserPage />,
+    layout: "/admin",
+  },
+  {
     //path: "/dashboard",
     path: '#',
     name: "Dashboard",
@@ -56,13 +64,6 @@ var dashRoutes = [
     name: "Notifications",
     icon: "ui-1_bell-53",
     component: <Notifications />,
-    layout: "/admin",
-  },
-  {
-    path: "/user-page",
-    name: "User Profile",
-    icon: "users_single-02",
-    component: <UserPage />,
     layout: "/admin",
   },
   
