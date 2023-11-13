@@ -45,6 +45,13 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
+    path: "/manage-users",
+    name: "Zarządzanie użytkownikami",
+    icon: "users_single-02",
+    component: <ManageUsers />,
+    layout: "/admin",
+  },
+  {
     //path: "/dashboard",
     path: '#',
     name: "Dashboard",

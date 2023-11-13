@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import AuthService from './services/AuthService';
 import SignIn from "views/SignIn";
+import AddUser from "views/AddUser";
+//import EditUser from "views/EditUser";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "assets/scss/now-ui-dashboard.scss?v1.5.0";
@@ -31,6 +33,8 @@ root.render(
           </PrivateRoute>
         }
       />
+      <Route path="/admin/add-user" element={<PrivateRoute><AddUser /></PrivateRoute>} />
+      {/*<Route path="/admin/edit-user" element={<PrivateRoute><EditUser /></PrivateRoute>} />*/}
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
   </BrowserRouter>
