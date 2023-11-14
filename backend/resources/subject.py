@@ -2,13 +2,24 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from db import db
 from models import SubjectModel, UserModel
 from schemas import SubjectSchema, SubjectUpdateSchema
 
 blp = Blueprint("Subjects", __name__, description="Operations on subjects")
+
+
+def get_dates_for_day(start_date, end_date, day):
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    date_list = []
+    while start <= end:
+        if start.strftime("%A").lower() == day.lower():
+            date_list.append(start.date())
+        start += timedelta(days=1)
+    return date_list
 
 
 @blp.route("/subject")
@@ -118,3 +129,45 @@ class SubjectsByDate(MethodView):
         ).all()
 
         return subjects
+
+
+@blp.route("/subject/start/<start_date>/end/<end_date>")
+class SubjectByDateRange(MethodView):
+    @jwt_required()
+    @blp.arguments(SubjectSchema)
+    @blp.response(201, SubjectSchema(many=True))
+    def post(self, subject_data, start_date, end_date):
+        # Check that end_date is greater than start_date
+        if datetime.strptime(start_date, "%Y-%m-%d") >= datetime.strptime(end_date, "%Y-%m-%d"):
+            abort(400, message="End date must be greater than start date.")
+
+        # Generate dates for the specified day
+        dates = get_dates_for_day(start_date, end_date, subject_data['day'])
+
+        created_subjects = []
+        for date in dates:
+            # Check if there is an existing subject at the same time
+            overlapping_subject = SubjectModel.query.filter(
+                SubjectModel.user_id == subject_data["user_id"],
+                SubjectModel.date == date,
+                SubjectModel.start < subject_data["end"],
+                SubjectModel.end > subject_data["start"]
+            ).first()
+
+            if overlapping_subject:
+                continue  # Skip creating a subject for this date due to overlap
+
+            # Create new subject
+            new_subject_data = subject_data.copy()
+            new_subject_data['date'] = date
+            new_subject_data['user_id'] = subject_data["user_id"]
+            new_subject = SubjectModel(**new_subject_data)
+
+            try:
+                db.session.add(new_subject)
+                db.session.commit()
+                created_subjects.append(new_subject)
+            except IntegrityError:
+                abort(500, message=f"An error occurred while inserting the subject for date {date}.")
+
+        return created_subjects
