@@ -25,18 +25,21 @@ class SubjectList(MethodView):
         # Check conditions before adding
         if subject_data["start"] >= subject_data["end"]:
             abort(400, message="Start time should be less than end time.")
-        if subject_data["start_day"] > subject_data["end_day"]:
-            abort(400, message="Start day should be less than or equal to end day.")
+
+        # Validate that 'day' and 'date' correspond to the same day of the week
+        day_of_week = subject_data["date"].strftime("%A").lower()
+        if day_of_week != subject_data["day"].lower():
+            abort(400, message="The day of the week does not match the date provided.")
 
         # Check if the user doesn't have any other subjects at that time and day.
-        existing_subjects = UserModel.query.get(subject_data["user_id"]).subjects.filter(
-            SubjectModel.day == subject_data["day"],
+        overlapping_subject = SubjectModel.query.filter(
+            SubjectModel.date == subject_data["date"],
             SubjectModel.start < subject_data["end"],
             SubjectModel.end > subject_data["start"]
-        ).all()
-
-        if existing_subjects:
-            abort(400, message="User already has a subject scheduled at this time.")
+        ).first()
+        if overlapping_subject:
+            abort(
+                409, message="Updating this subject would cause a time overlap with an existing subject.")
 
         # Add the subject
         subject = SubjectModel(**subject_data)
@@ -65,19 +68,16 @@ class Subject(MethodView):
         # Check conditions before updating
         if "start" in subject_data and "end" in subject_data and subject_data["start"] >= subject_data["end"]:
             abort(400, message="Start time should be less than end time.")
-        if "start_day" in subject_data and "end_day" in subject_data and subject_data["start_day"] > subject_data["end_day"]:
-            abort(400, message="Start day should be less than or equal to end day.")
 
         # Check if the user doesn't have any other subjects at that time and day.
-        existing_subjects = UserModel.query.get(subject_data.get("user_id", subject.user_id)).subjects.filter(
-            SubjectModel.id != subject_id,
-            SubjectModel.day == subject_data.get("day", subject.day),
-            SubjectModel.start < subject_data.get("end", subject.end),
-            SubjectModel.end > subject_data.get("start", subject.start)
-        ).all()
-
-        if existing_subjects:
-            abort(400, message="User already has a subject scheduled at this time.")
+        # overlapping_subject = SubjectModel.query.filter(
+        #     SubjectModel.date == subject_data["date"],
+        #     SubjectModel.start < subject_data["end"],
+        #     SubjectModel.end > subject_data["start"]
+        # ).first()
+        # if overlapping_subject:
+        #     abort(
+        #         409, message="Updating this subject would cause a time overlap with an existing subject.")
 
         # Update the subject
         for key, value in subject_data.items():
@@ -111,15 +111,10 @@ class SubjectsByDate(MethodView):
         except ValueError:
             abort(400, message="Invalid date format. Use YYYY-MM-DD.")
 
-        # Get the day string (e.g., "Monday", "Tuesday", etc.)
-        day_str = queried_date.strftime("%A")
-
         # Fetch subjects for the user that fall on the queried_date and match the day
         subjects = SubjectModel.query.filter(
             SubjectModel.user_id == user_id,
-            SubjectModel.start_day <= queried_date,
-            SubjectModel.end_day >= queried_date,
-            SubjectModel.day == day_str
+            SubjectModel.date == queried_date
         ).all()
 
         return subjects

@@ -12,8 +12,8 @@ class SubjectModel(db.Model):
     end = db.Column('end', db.Time, unique=False, nullable=False)
     classroom = db.Column('classroom', db.String(8),
                           unique=False, nullable=False)
-    start_day = db.Column('start_day', db.Date, unique=False, nullable=False)
-    end_day = db.Column('end_day', db.Date, unique=False, nullable=False)
+    date = db.Column('date', db.Date, unique=False, nullable=False)
+    visible = db.Column('visible', db.Boolean, unique=False, nullable=False)
 
     # Foreign keys
     user_id = db.Column('user_id', db.Integer, db.ForeignKey(
