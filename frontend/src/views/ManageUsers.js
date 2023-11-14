@@ -11,7 +11,7 @@ import {
     Button,
     Input,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as XLSX from 'xlsx';
 
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
@@ -24,6 +24,7 @@ function ManageUsers() {
     const [noData, setNoData] = useState(true);
     const [sortDirection, setSortDirection] = useState("ascending");
     const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
 
     const fetchUsers = async () => {
         setIsLoading(true);
@@ -42,11 +43,13 @@ function ManageUsers() {
 
             const data = await response.json();
 
-            if (Array.isArray(data) && data.length === 0) {
+            const activeUsers = data.filter(user => !user.deleted);
+
+            if (Array.isArray(activeUsers) && activeUsers.length === 0) {
                 setNoData(true);
             } else {
-                setTableData(data);
-                setFilteredData(data);
+                setTableData(activeUsers);
+                setFilteredData(activeUsers);
                 setNoData(false);
             }
         } catch (error) {
@@ -86,6 +89,63 @@ function ManageUsers() {
         setFilteredData(filteredUsers);
     };
 
+    const handleEdit = (userId) => {
+        navigate(`/admin/edit-user/${userId}`);
+    };
+
+    const handleDeleteUser = async (userId) => {
+        if (window.confirm("Are you sure you want to mark this user as deleted?")) {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`http://localhost:5000/user/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ deleted: true }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                setTableData(tableData.map(user => user.id === userId ? { ...user, deleted: true } : user));
+                setFilteredData(filteredData.map(user => user.id === userId ? { ...user, deleted: true } : user));
+                await fetchUsers();
+                console.log("User marked as deleted successfully");
+            } catch (error) {
+                console.error("Error updating user:", error);
+            }
+        }
+    };
+
+    const handleDeleteSelectedUsers = async () => {
+        if (window.confirm("Are you sure you want to mark the selected users as deleted?")) {
+            try {
+                const token = localStorage.getItem("token");
+    
+                // Promise.all to handle multiple requests concurrently
+                await Promise.all(selectedRows.map(userId => 
+                    fetch(`http://localhost:5000/user/${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ deleted: true }),
+                    })
+                ));
+    
+                // Refetch users to update the list
+                await fetchUsers();
+                console.log("Selected users marked as deleted successfully");
+            } catch (error) {
+                console.error("Error updating users:", error);
+            }
+        }
+    };
+
     const sortedData = () => {
         const sortableData = [...filteredData];
         sortableData.sort((a, b) => {
@@ -99,6 +159,7 @@ function ManageUsers() {
         });
         return sortableData;
     };
+
 
     const exportToExcel = () => {
         const processedData = tableData.map(user => {
@@ -116,6 +177,7 @@ function ManageUsers() {
 
         XLSX.writeFile(workbook, 'users_list.xlsx');
     };
+
 
     return (
         <>
@@ -189,12 +251,12 @@ function ManageUsers() {
                                                     <td>{row.phone}</td>
                                                     <td>{row.role.name}</td>
                                                     <td className="text-center">
-                                                        <Button color="danger">Usuń</Button>
-                                                        {/*<Link to="/admin/edit-user">*/}
-                                                            <Button color="info" className="ml-2">
+                                                        <Button color="danger" onClick={() => handleDeleteUser(row.id)}>Usuń</Button>
+                                                        <Link to={`/admin/edit-user/${row.id}`}>
+                                                            <Button color="info" className="ml-2" onClick={() => handleEdit(row.id)}>
                                                                 Edytuj
                                                             </Button>
-                                                        {/*</Link>*/}
+                                                        </Link>
                                                     </td>
                                                 </tr>
                                             ))}
@@ -213,12 +275,7 @@ function ManageUsers() {
                                     <Button
                                         color="primary"
                                         className="ml-2"
-                                        onClick={() =>
-                                            console.log(
-                                                "Delete Selected button clicked",
-                                                selectedRows
-                                            )
-                                        }
+                                        onClick={handleDeleteSelectedUsers}
                                     >
                                         Usuń zaznaczone
                                     </Button>
