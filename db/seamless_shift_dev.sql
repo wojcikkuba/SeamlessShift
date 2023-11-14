@@ -83,10 +83,10 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`subject` (
   `end` TIME NOT NULL, 
   `classroom` VARCHAR(8) NOT NULL, 
   `user_id` INT NOT NULL, 
-  `start_day` DATE NOT NULL, 
-  `end_day` DATE NOT NULL, 
+  `date` DATE NOT NULL,
   `subject_type_id` INT NOT NULL, 
   `course_id` INT NOT NULL, 
+  `visible` TINYINT(1) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_subject_user1_idx` (`user_id` ASC) VISIBLE, 
   INDEX `fk_subject_subject_type1_idx` (`subject_type_id` ASC) VISIBLE, 
@@ -155,20 +155,17 @@ VALUES
     'student', 'student', 'student@pollub.pl', 
     '555-555-5553', 3, 1, 0, 1
   );
--- Regular user
+  -- Regular user
 -- Inserting subject_types
 INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
 VALUES 
-  (1, 'Mathematics');
+  (1, 'wyklad');
 INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
 VALUES 
-  (2, 'Physics');
+  (2, 'cw');
 INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
 VALUES 
-  (3, 'Chemistry');
-INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
-VALUES 
-  (4, 'Biology');
+  (3, 'lab');
 -- Inserting courses
 INSERT INTO `shift_db`.`course` (`id`, `name`) 
 VALUES 
@@ -182,24 +179,20 @@ VALUES
 -- Inserting subjects
 INSERT INTO `shift_db`.`subject` (
   `description`, `day`, `start`, `end`, 
-  `classroom`, `user_id`, `start_day`, 
-  `end_day`, `subject_type_id`, `course_id`
+  `classroom`, `user_id`, `date`, `subject_type_id`, `course_id`, `visible`
 ) 
 VALUES 
   (
     'Mathematics 101', 'Monday', '08:00:00', 
-    '09:30:00', 'Room 101', 1, '2023-11-01', 
-    '2023-12-15', 1, 1
+    '09:30:00', 'Room 101', 1, '2023-11-06', 1, 1, 1
   ), 
   (
     'Physics 202', 'Wednesday', '10:00:00', 
-    '11:30:00', 'Room 202', 2, '2023-11-01', 
-    '2023-12-15', 2, 2
+    '11:30:00', 'Room 202', 2, '2023-11-08', 2, 2, 1
   ), 
   (
     'Chemistry 303', 'Friday', '13:00:00', 
-    '14:30:00', 'Room 303', 3, '2023-11-01', 
-    '2023-12-15', 3, 3
+    '14:30:00', 'Room 303', 3, '2023-11-10', 3, 3, 1
   );
 -- Inserting requests
 INSERT INTO `shift_db`.`request` (`issue_date`, `comment`, `subject_id`, `user_id`, `date`, `status`) 

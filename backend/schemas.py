@@ -34,12 +34,12 @@ class PlainSubjectSchema(Schema):
     start = fields.Time(required=True)
     end = fields.Time(required=True)
     classroom = fields.Str(required=True)
-    start_day = fields.Date(required=True)
-    end_day = fields.Date(required=True)
+    date = fields.Date(required=False)
     user_id = fields.Int(required=True)
     course_id = fields.Int(required=True)
     course = fields.Nested(PlainCourseSchema(), dump_only=True)
     subject_type_id = fields.Int(required=True)
+    visible = fields.Bool(required=False)
 
 
 class UserSchema(PlainUserSchema):
@@ -130,11 +130,11 @@ class SubjectUpdateSchema(Schema):
     start = fields.Time()
     end = fields.Time()
     classroom = fields.Str()
-    start_day = fields.Date()
-    end_day = fields.Date()
+    date = fields.Date()
     user_id = fields.Int()
     course_id = fields.Int()
     subject_type_id = fields.Int()
+    visible = fields.Bool()
 
 
 class RoleSchema(PlainRoleSchema):
