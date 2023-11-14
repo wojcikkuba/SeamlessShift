@@ -183,7 +183,7 @@ function AddUser() {
                                             <FormGroup>
                                                 <label>Rola</label>
                                                 <Input type="select" onChange={handleRoleChange}>
-                                                    <option value="" disabled>Wybierz rolę</option>
+                                                    <option value="">Wybierz rolę</option>
                                                     {roles.map((role) => (
                                                         <option key={role.id} value={role.id}>
                                                             {role.name}
@@ -224,7 +224,7 @@ function AddUser() {
                                             <FormGroup>
                                                 <label>Zakład</label>
                                                 <Input type="select" onChange={handleFacilityChange}>
-                                                    <option value="" disabled>Wybierz zakład</option>
+                                                    <option value="">Wybierz zakład</option>
                                                     {facilities.map((facility) => (
                                                         <option key={facility.id} value={facility.id}>
                                                             {facility.name}
