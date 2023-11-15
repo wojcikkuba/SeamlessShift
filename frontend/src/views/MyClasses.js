@@ -93,7 +93,7 @@ function MyClasses() {
                                 ) : selectedDate && noData ? (
                                     <p className="text-info h4 text-center">Brak zajęć w danym dniu</p>
                                 ) : selectedDate ? (
-                                    <Table responsive bordered>
+                                    <Table responsive bordered className="text-center">
                                         <thead className="text-primary">
                                             <tr>
                                                 <th>Godzina rozpoczęcia</th>
@@ -108,8 +108,8 @@ function MyClasses() {
                                         <tbody>
                                             {tableData.map((row, rowIndex) => (
                                                 <tr key={rowIndex}>
-                                                    <td>{row.start}</td>
-                                                    <td>{row.end}</td>
+                                                    <td>{row.start.slice(0,5)}</td>
+                                                    <td>{row.end.slice(0,5)}</td>
                                                     <td>{row.description}</td>
                                                     <td>{row.classroom}</td>
                                                     <td>{row.subject_type.type}</td>
