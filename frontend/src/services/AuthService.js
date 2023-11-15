@@ -9,6 +9,15 @@ class AuthService {
         return true;
     }
 
+    static isAdmin() {
+        const user = localStorage.getItem('user');
+        if (user) {
+            const parsedUser = JSON.parse(user);
+            return parsedUser.role_id === 2;
+        }
+        return false;
+    }
+
     static isTokenExpired(token) {
         const expirationDate = this.getTokenExpirationDate(token);
         return expirationDate < new Date();
