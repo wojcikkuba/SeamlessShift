@@ -7,7 +7,7 @@ import MyClasses from "views/MyClasses.js";
 import AddRequest from "views/AddRequest";
 import CurrentRequests from "views/CurrentRequests";
 import ManageUsers from "views/ManageUsers";
-import ManageCourses from "views/ManageCourses";
+import ManageSubjects from "views/ManageSubjects";
 
 var dashRoutes = [
   {
@@ -48,15 +48,15 @@ var dashRoutes = [
   {
     path: "/manage-users",
     name: "Zarządzanie użytkownikami",
-    icon: "users_single-02",
+    icon: "business_badge",
     component: <ManageUsers />,
     layout: "/admin",
   },
   {
-    path: "/manage-courses",
+    path: "/manage-subjects",
     name: "Zarządzanie planem",
-    icon: "users_single-02",
-    component: <ManageCourses />,
+    icon: "ui-2_settings-90",
+    component: <ManageSubjects />,
     layout: "/admin",
   },
   {
