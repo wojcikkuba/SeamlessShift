@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from db import db
 from models import RequestModel, SubjectModel, ReplacementModel
+from schemas import ReplacementSchema
 
 blp = Blueprint("Replacement", __name__, description="Operations on replacements")
 
@@ -17,8 +18,8 @@ class ReplacementResource(MethodView):
         return replacements
 
     @jwt_required()
-    @blp.arguments(RequestSchema)
-    @blp.response(201, ReplacementModel)
+    @blp.arguments(ReplacementSchema)
+    @blp.response(201, ReplacementSchema)
     def post(self, data):
         user_id = data['user_id']
         request_id = data['request_id']
@@ -28,9 +29,20 @@ class ReplacementResource(MethodView):
         if request.status != 'Requested':
             abort(400, message="Request is not in 'Requested' status.")
 
-        # Step 2: Create a new subject for user_id from replacement
+        # Step 2: Check if the user doesn't have any other subjects at that time and day.
         original_subject = request.subject
+
+        overlapping_subject = SubjectModel.query.filter(
+            SubjectModel.user_id == user_id,
+            SubjectModel.date == original_subject.date,
+            SubjectModel.start < original_subject.end,
+            SubjectModel.end > original_subject.start
+        ).first()
+        if overlapping_subject:
+            abort(
+                409, message="Updating this subject would cause a time overlap with an existing subject.")
         
+        # Step 3: Create a new subject for user_id from replacement
         new_subject = SubjectModel(
             description=original_subject.description,
             day=original_subject.day,
@@ -43,17 +55,23 @@ class ReplacementResource(MethodView):
             course_id=original_subject.course_id,
             subject_type_id=original_subject.subject_type_id
         )
-        db.session.add(new_subject)
-        db.session.commit()
+        try:
+            db.session.add(new_subject)
+            db.session.commit()
+        except IntegrityError:
+            abort(500, message="An error occurred while inserting the subject.")
 
-        # Step 3: Create a new record in the replacement db table
+        # Step 4: Create a new record in the replacement db table
         replacement = ReplacementModel(user_id=user_id, subject_id=new_subject.id, request_id=request_id)
-        db.session.add(replacement)
+        try:
+            db.session.add(replacement)
+        except IntegrityError:
+            abort(500, message="An error occurred while inserting the subject.")
 
-        # Step 4: Change request status to 'Confirmed'
+        # Step 5: Change request status to 'Confirmed'
         request.status = 'Confirmed'
 
-        # Step 5: Change the subject from request visible to false
+        # Step 6: Change the subject from request visible to false
         original_subject.visible = False
 
         try:
@@ -61,4 +79,4 @@ class ReplacementResource(MethodView):
         except IntegrityError:
             abort(500, message="An error occurred during the replacement process.")
 
-        return replacement
+        return replacement, 201
