@@ -21,3 +21,4 @@ class RequestModel(db.Model):
     # Relationships
     user = db.relationship("UserModel", back_populates="requests")
     subject = db.relationship("SubjectModel", back_populates="requests")
+    replacement = db.relationship("ReplacementModel", back_populates="request")

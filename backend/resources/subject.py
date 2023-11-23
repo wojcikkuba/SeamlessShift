@@ -44,6 +44,7 @@ class SubjectList(MethodView):
 
         # Check if the user doesn't have any other subjects at that time and day.
         overlapping_subject = SubjectModel.query.filter(
+            SubjectModel.user_id == subject_data["user_id"],
             SubjectModel.date == subject_data["date"],
             SubjectModel.start < subject_data["end"],
             SubjectModel.end > subject_data["start"]
@@ -77,8 +78,8 @@ class Subject(MethodView):
         subject = SubjectModel.query.get_or_404(subject_id)
 
         # Check conditions before updating
-        if "start" in subject_data and "end" in subject_data and subject_data["start"] >= subject_data["end"]:
-            abort(400, message="Start time should be less than end time.")
+        # if "start" in subject_data and "end" in subject_data and subject_data["start"] >= subject_data["end"]:
+        #     abort(400, message="Start time should be less than end time.")
 
         # Check if the user doesn't have any other subjects at that time and day.
         # overlapping_subject = SubjectModel.query.filter(

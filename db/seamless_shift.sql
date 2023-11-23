@@ -156,17 +156,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `shift_db`.`replacement_status`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `shift_db`.`replacement_status` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `shift_db`.`replacement`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `shift_db`.`replacement` (
@@ -174,12 +163,10 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`replacement` (
   `request_id` INT NOT NULL,
   `subject_id` INT NOT NULL,
   `user_id` INT NOT NULL,
-  `replacement_status_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_replacement_request1_idx` (`request_id` ASC) VISIBLE,
   INDEX `fk_replacement_subject1_idx` (`subject_id` ASC) VISIBLE,
   INDEX `fk_replacement_user1_idx` (`user_id` ASC) VISIBLE,
-  INDEX `fk_replacement_replacement_status1_idx` (`replacement_status_id` ASC) VISIBLE,
   CONSTRAINT `fk_replacement_request1`
     FOREIGN KEY (`request_id`)
     REFERENCES `shift_db`.`request` (`id`)
@@ -193,11 +180,6 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`replacement` (
   CONSTRAINT `fk_replacement_user1`
     FOREIGN KEY (`user_id`)
     REFERENCES `shift_db`.`user` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_replacement_replacement_status1`
-    FOREIGN KEY (`replacement_status_id`)
-    REFERENCES `shift_db`.`replacement_status` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

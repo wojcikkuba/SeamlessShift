@@ -120,6 +120,34 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`request` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `shift_db`.`replacement`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `shift_db`.`replacement` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `request_id` INT NOT NULL,
+  `subject_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_replacement_request1_idx` (`request_id` ASC) VISIBLE,
+  INDEX `fk_replacement_subject1_idx` (`subject_id` ASC) VISIBLE,
+  INDEX `fk_replacement_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_replacement_request1`
+    FOREIGN KEY (`request_id`)
+    REFERENCES `shift_db`.`request` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_replacement_subject1`
+    FOREIGN KEY (`subject_id`)
+    REFERENCES `shift_db`.`subject` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_replacement_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `shift_db`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 -- Inserting roles
 INSERT INTO shift_db.role (id, name) 
 VALUES 

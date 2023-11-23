@@ -42,6 +42,12 @@ class PlainSubjectSchema(Schema):
     visible = fields.Bool(required=False)
 
 
+class PlainReplacementSchema(Schema):
+    id = fields.Int(dump_only=True)
+    user_id = fields.Int(required=True)
+    subject_id = fields.Int(required=True)
+    request_id = fields.Int(required=True)
+
 class UserSchema(PlainUserSchema):
     firstName = fields.Str(required=True)
     lastName = fields.Str(required=True)
@@ -59,7 +65,7 @@ class UserSchema(PlainUserSchema):
 
 
 class SubjectSchema(PlainSubjectSchema):
-    key = fields.Method("get_time_key", dump_only=True)
+    key = fields.Method("get_time_key", dump_only=True)  # remove it
     user = fields.Nested(PlainUserSchema(), dump_only=True)
     subject_type = fields.Nested(PlainSubjectTypeSchema(), dump_only=True)
 
@@ -101,6 +107,12 @@ class RequestSchema(Schema):
     status = fields.Str(required=True)
     user = fields.Nested(RequestUserSchema(), dump_only=True)
     subject = fields.Nested(PlainSubjectSchema(), dump_only=True)
+
+
+class ReplacementSchema(PlainReplacementSchema):
+    user = fields.Nested(UserSchema(), dump_only=True)
+    subject = fields.Nested(SubjectSchema(), dump_only=True)
+    request = fields.Nested(RequestSchema(), dump_only=True)
 
 
 class RequestUpdateSchema(Schema):

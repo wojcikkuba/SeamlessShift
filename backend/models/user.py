@@ -27,4 +27,7 @@ class UserModel(db.Model):
     role = db.relationship("RoleModel", back_populates="users")
     subjects = db.relationship(
         "SubjectModel", back_populates="user", lazy='dynamic')
-    requests = db.relationship("RequestModel", back_populates="user", lazy='dynamic') 
+    requests = db.relationship(
+        "RequestModel", back_populates="user", lazy='dynamic')
+    replacements = db.relationship(
+        "ReplacementModel", back_populates="user", lazy='dynamic')
