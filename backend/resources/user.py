@@ -1,3 +1,4 @@
+from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
@@ -44,6 +45,9 @@ class UserList(MethodView):
     @jwt_required()
     @blp.response(200, UserSchema(many=True))
     def get(self):
+        deleted_param = request.args.get('deleted', type=str)
+        if deleted_param:
+            return UserModel.query.filter(UserModel.deleted == deleted_param.lower()).all()
         return UserModel.query.all()
 
     @jwt_required()
