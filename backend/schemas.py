@@ -66,29 +66,8 @@ class UserSchema(PlainUserSchema):
 
 
 class SubjectSchema(PlainSubjectSchema):
-    key = fields.Method("get_time_key", dump_only=True)  # remove it
     user = fields.Nested(PlainUserSchema(), dump_only=True)
     subject_type = fields.Nested(PlainSubjectTypeSchema(), dump_only=True)
-
-    def get_time_key(self, obj):
-        if obj.start.hour >= 6 and obj.start.hour < 8:
-            return 1
-        elif obj.start.hour >= 8 and obj.start.hour < 10:
-            return 2
-        elif obj.start.hour >= 10 and obj.start.hour < 12:
-            return 3
-        elif obj.start.hour >= 12 and obj.start.hour < 14:
-            return 4
-        elif obj.start.hour >= 14 and obj.start.hour < 16:
-            return 5
-        elif obj.start.hour >= 16 and obj.start.hour < 18:
-            return 6
-        elif obj.start.hour >= 18 and obj.start.hour < 20:
-            return 7
-        elif obj.start.hour >= 20 and obj.start.hour < 22:
-            return 8
-        else:
-            return 8
 
 
 class RequestUserSchema(Schema):
