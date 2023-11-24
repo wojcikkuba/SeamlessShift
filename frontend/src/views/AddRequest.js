@@ -86,15 +86,17 @@ function AddRequest() {
             try {
                 const token = localStorage.getItem('token');
                 const userId = JSON.parse(localStorage.getItem('user')).id;
+                const status = "Requested";
                 const issueDate = new Date().toISOString();
                 const subjectId = selectedSubjects[0]; // jesli tylko jeden
-                const formattedDate = new Date(selectedDate).toISOString();
+                const formattedDate = new Date(selectedDate);
                 const body = JSON.stringify({
                     issue_date: issueDate,
                     comment: comment,
                     subject_id: subjectId,
                     user_id: userId,
-                    date: formattedDate,
+                    date: formattedDate.toISOString().split("T")[0],
+                    status: status
                 });
 
                 const response = await fetch("http://localhost:5000/request", {

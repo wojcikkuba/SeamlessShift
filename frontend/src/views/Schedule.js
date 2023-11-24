@@ -68,8 +68,9 @@ function Schedule() {
             if (Array.isArray(data) && data.length === 0) {
                 setNoData(true);
             } else {
-                setTableData(data);
-                setNoData(false);
+                const visibleData = data.filter((row) => row.visible);
+                setTableData(visibleData);
+                setNoData(visibleData.length === 0);
             }
 
         } catch (error) {
@@ -107,7 +108,7 @@ function Schedule() {
                                             id="exampleUser"
                                             onChange={handleUserChange}
                                         >
-                                            <option value="" disabled>Wybierz użytkownika</option>
+                                            <option value="">Wybierz użytkownika</option>
                                             {users.map((user) => (
                                                 <option key={user.id} value={user.id}>
                                                     {user.firstName} {user.lastName} ({user.email})
@@ -148,10 +149,10 @@ function Schedule() {
                                                 <tr key={rowIndex}>
                                                     <td>{row.start}</td>
                                                     <td>{row.end}</td>
-                                                    <td>{row.description}</td>
+                                                    <td>{row.course.name}</td>
                                                     <td>{row.classroom}</td>
                                                     <td>{row.subject_type.type}</td>
-                                                    <td>{row.course.name}</td>
+                                                    <td>{row.description}</td>
                                                 </tr>
                                             ))}
                                         </tbody>

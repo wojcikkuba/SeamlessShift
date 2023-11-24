@@ -18,11 +18,6 @@ import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function MyClasses() {
 
-    let headers = new Headers();
-
-    headers.append('Content-Type', 'application/json');
-    headers.append('Accept', 'application/json');
-
     const [selectedDate, setSelectedDate] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
@@ -46,8 +41,9 @@ function MyClasses() {
             if (Array.isArray(data) && data.length === 0) {
                 setNoData(true);
             } else {
-                setTableData(data);
-                setNoData(false);
+                const visibleData = data.filter((row) => row.visible);
+                setTableData(visibleData);
+                setNoData(visibleData.length === 0);
             }
 
         } catch (error) {
@@ -117,7 +113,7 @@ function MyClasses() {
                                                     <td className="text-center" >
                                                         <Link
                                                             to={{
-                                                                pathname: "/admin/add-request",
+                                                                pathname: "/user/add-request",
                                                                 search: `?date=${selectedDate}&subjectId=${row.id}`,
                                                             }}
                                                         >
