@@ -48,6 +48,7 @@ class PlainReplacementSchema(Schema):
     subject_id = fields.Int(dump_only=True)
     request_id = fields.Int(required=True)
 
+
 class UserSchema(PlainUserSchema):
     firstName = fields.Str(required=True)
     lastName = fields.Str(required=True)

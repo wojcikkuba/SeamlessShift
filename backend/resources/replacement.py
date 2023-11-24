@@ -7,7 +7,9 @@ from db import db
 from models import RequestModel, SubjectModel, ReplacementModel
 from schemas import ReplacementSchema
 
-blp = Blueprint("Replacement", __name__, description="Operations on replacements")
+blp = Blueprint("Replacement", __name__,
+                description="Operations on replacements")
+
 
 @blp.route("/replacement")
 class ReplacementResource(MethodView):
@@ -41,7 +43,7 @@ class ReplacementResource(MethodView):
         if overlapping_subject:
             abort(
                 409, message="Updating this subject would cause a time overlap with an existing subject.")
-        
+
         # Step 3: Create a new subject for user_id from replacement
         new_subject = SubjectModel(
             description=original_subject.description,
@@ -62,11 +64,12 @@ class ReplacementResource(MethodView):
             abort(500, message="An error occurred while inserting the subject.")
 
         # Step 4: Create a new record in the replacement db table
-        replacement = ReplacementModel(user_id=user_id, subject_id=new_subject.id, request_id=request_id)
+        replacement = ReplacementModel(
+            user_id=user_id, subject_id=new_subject.id, request_id=request_id)
         try:
             db.session.add(replacement)
         except IntegrityError:
-            abort(500, message="An error occurred while inserting the subject.")
+            abort(500, message="An error occurred while inserting the replacement.")
 
         # Step 5: Change request status to 'Confirmed'
         request.status = 'Confirmed'
@@ -80,3 +83,47 @@ class ReplacementResource(MethodView):
             abort(500, message="An error occurred during the replacement process.")
 
         return replacement, 201
+
+
+@blp.route("/replacement/<int:replacement_id>")
+class Replacement(MethodView):
+    @jwt_required()
+    @blp.response(200, ReplacementSchema)
+    def get(self, replacement_id):
+        replacement = ReplacementModel.query.get_or_404(replacement_id)
+        return replacement
+
+    @jwt_required()
+    def delete(self, replacement_id):
+        replacement = ReplacementModel.query.get_or_404(replacement_id)
+        request = replacement.request
+        original_subject = request.subject
+        replacement_subject = replacement.subject
+
+        # Step 1: Change the subject from request visible to true
+        original_subject.visible = True
+
+        # Step 2: Remove a new record in the replacement db table
+        try:
+            db.session.commit()
+            db.session.delete(replacement)
+        except IntegrityError:
+            abort(500, message="An error occurred while inserting the subject.")
+
+        # Step 3: Remove a new subject for user_id from replacement
+        db.session.delete(replacement_subject)
+        try:
+            db.session.delete(replacement_subject)
+        except IntegrityError:
+            abort(400, message="Cannot delete subject with request assigned to it.")
+
+        # Step 4: Change request status to 'Requested'
+        request.status = 'Requested'
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            abort(
+                500, message="An error occurred during the replacement removing process.")
+
+        return {"message": "Replacement deleted"}
