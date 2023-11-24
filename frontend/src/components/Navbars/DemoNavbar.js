@@ -3,11 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Container, }
   from "reactstrap";
 
-import routes from "routes.js";
+import adminRoutes from "routes/admin.js";
+import userRoutes from "routes/user.js";
 import AuthService from "services/AuthService";
 
 function DemoNavbar(props) {
-
+  const routes = AuthService.isAdmin() ? adminRoutes : userRoutes;
   const location = useLocation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -144,7 +145,7 @@ function DemoNavbar(props) {
               </DropdownToggle>
 
               <DropdownMenu right>
-                <DropdownItem tag={Link} to="/admin/user-page">Moje konto</DropdownItem>
+                <DropdownItem tag={Link} to={`${AuthService.isAdmin() ? "/admin" : "/user"}/user-page`}>Moje konto</DropdownItem>
                 <DropdownItem tag={Link} to='/login' className="logout-button" onClick={handleLogoutClick}>Wyloguj</DropdownItem>
               </DropdownMenu>
             </Dropdown>

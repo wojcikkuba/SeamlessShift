@@ -37,7 +37,7 @@ root.render(
     <Routes>
       <Route
         path="/login"
-        element={AuthService.isAuthenticated() ? <Navigate to="/admin/dashboard" /> : <SignIn />}
+        element={AuthService.isAuthenticated() ? <Navigate to={AuthService.isAdmin() ? "/admin/dashboard" : "/user/dashboard"} replace /> : <SignIn />}
       />
       <Route
         path="/admin/*"
