@@ -6,3 +6,7 @@ Insomnia_SeamlessShift.json
 
 # misc
 .DS_Store
+
+# React
+/node_modules
+package*.json

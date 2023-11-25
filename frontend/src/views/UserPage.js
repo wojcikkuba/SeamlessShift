@@ -1,25 +1,5 @@
-/*!
-
-=========================================================
-* Now UI Dashboard React - v1.5.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/now-ui-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-
-// reactstrap components
+import React, { useState, useEffect } from "react";
 import {
-  Button,
   Card,
   CardHeader,
   CardBody,
@@ -28,189 +8,106 @@ import {
   Input,
   Row,
   Col,
+  CardTitle,
 } from "reactstrap";
 
-// core components
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function User() {
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    role: "",
+    email: "",
+    phone: "",
+    department: "",
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userId = JSON.parse(localStorage.getItem("user")).id;
+
+    fetch(`http://localhost:5000/user/${userId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUserData({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: data.role.name,
+          email: data.email,
+          phone: data.phone,
+          department: data.facility.name,
+        });
+      })
+      .catch((error) => console.error("Błąd pobierania danych z API:", error));
+  }, []); // Pusta zależność oznacza, że useEffect wywoła się tylko raz, po zamontowaniu komponentu
+
   return (
     <>
       <PanelHeader size="sm" />
       <div className="content">
         <Row>
-          <Col md="8">
+          <Col xs={12}>
             <Card>
               <CardHeader>
-                <h5 className="title">Edit Profile</h5>
+                <CardTitle tag="h4">Moje konto</CardTitle>
               </CardHeader>
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="pr-1" md="5">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>Company (disabled)</label>
-                        <Input
-                          defaultValue="Creative Code Inc."
-                          disabled
-                          placeholder="Company"
-                          type="text"
-                        />
+                        <label>Imię</label>
+                        <Input type="text" value={userData.firstName} disabled />
                       </FormGroup>
                     </Col>
-                    <Col className="px-1" md="3">
+                    <Col className="pl-1" md="6">
                       <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue="michael23"
-                          placeholder="Username"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input placeholder="Email" type="email" />
+                        <label>Nazwisko</label>
+                        <Input type="text" value={userData.lastName} disabled />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
                     <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>First Name</label>
-                        <Input
-                          defaultValue="Mike"
-                          placeholder="Company"
-                          type="text"
-                        />
+                        <label>Rola</label>
+                        <Input type="text" value={userData.role} disabled />
                       </FormGroup>
                     </Col>
                     <Col className="pl-1" md="6">
                       <FormGroup>
-                        <label>Last Name</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Last Name"
-                          type="text"
-                        />
+                        <label htmlFor="exampleInputEmail1">E-mail</label>
+                        <Input type="email" value={userData.email} disabled />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col md="12">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>Address</label>
-                        <Input
-                          defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                          placeholder="Home Address"
-                          type="text"
-                        />
+                        <label>Telefon</label>
+                        <Input type="phone" value={userData.phone} disabled />
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="4">
+                    <Col className="pl-1" md="6">
                       <FormGroup>
-                        <label>City</label>
-                        <Input
-                          defaultValue="Mike"
-                          placeholder="City"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-1" md="4">
-                      <FormGroup>
-                        <label>Country</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Country"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <FormGroup>
-                        <label>About Me</label>
-                        <Input
-                          cols="80"
-                          defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in
-                            that two seat Lambo."
-                          placeholder="Here can be your description"
-                          rows="4"
-                          type="textarea"
-                        />
+                        <label>Zakład</label>
+                        <Input type="email" value={userData.department} disabled />
                       </FormGroup>
                     </Col>
                   </Row>
                 </Form>
               </CardBody>
-            </Card>
-          </Col>
-          <Col md="4">
-            <Card className="card-user">
-              <div className="image">
-                <img alt="..." src={require("assets/img/bg5.jpg").default} />
-              </div>
-              <CardBody>
-                <div className="author">
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar border-gray"
-                      src={require("assets/img/mike.jpg").default}
-                    />
-                    <h5 className="title">Mike Andrew</h5>
-                  </a>
-                  <p className="description">michael24</p>
-                </div>
-                <p className="description text-center">
-                  "Lamborghini Mercy <br />
-                  Your chick she so thirsty <br />
-                  I'm in that two seat Lambo"
-                </p>
-              </CardBody>
-              <hr />
-              <div className="button-container">
-                <Button
-                  className="btn-neutral btn-icon btn-round"
-                  color="default"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  size="lg"
-                >
-                  <i className="fab fa-facebook-f" />
-                </Button>
-                <Button
-                  className="btn-neutral btn-icon btn-round"
-                  color="default"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  size="lg"
-                >
-                  <i className="fab fa-twitter" />
-                </Button>
-                <Button
-                  className="btn-neutral btn-icon btn-round"
-                  color="default"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  size="lg"
-                >
-                  <i className="fab fa-google-plus-g" />
-                </Button>
-              </div>
             </Card>
           </Col>
         </Row>

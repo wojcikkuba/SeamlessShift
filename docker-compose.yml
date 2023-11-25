@@ -57,17 +57,17 @@ services:
     # volumes:
     #   - ./backend:/app
 
-  #frontend:
-  #  image: now-ui-dashboard-react
-  #  build:
-  #    context: ./frontend
-  #    dockerfile: Dockerfile
-  #  ports:
-  #    - "3000:3000"
-  #  deploy:
-  #    resources:
-  #      limits:
-  #        cpus: "1"
-  #        memory: 512M
-  #  depends_on:
-  #    - backend
+  frontend:
+    image: now-ui-dashboard-react
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+    depends_on:
+      - backend

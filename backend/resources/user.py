@@ -1,10 +1,12 @@
+from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from passlib.hash import pbkdf2_sha256
 
 from db import db
+from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import PlainUserSchema, UserSchema, UserUpdateSchema
 
@@ -16,7 +18,8 @@ class UserLogin(MethodView):
     @blp.arguments(PlainUserSchema)
     def post(self, user_data):
         user = UserModel.query.filter(
-            UserModel.email == user_data["email"]
+            UserModel.email == user_data["email"],
+            UserModel.deleted == False
         ).first()
 
         user_schema = UserSchema()  # Change to blp.response
@@ -28,11 +31,23 @@ class UserLogin(MethodView):
         abort(401, message="Niepoprawne dane logowania")
 
 
+@blp.route("/logout")
+class UserLogout(MethodView):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        BLOCKLIST.add(jti)
+        return {"message": "Successfully logged out."}
+
+
 @blp.route("/user")
 class UserList(MethodView):
     @jwt_required()
     @blp.response(200, UserSchema(many=True))
     def get(self):
+        deleted_param = request.args.get('deleted', type=str)
+        if deleted_param:
+            return UserModel.query.filter(UserModel.deleted == deleted_param.lower()).all()
         return UserModel.query.all()
 
     @jwt_required()

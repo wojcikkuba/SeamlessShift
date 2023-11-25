@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
 from db import db
+from blocklist import BLOCKLIST
 import models
 import os
 
@@ -13,6 +14,8 @@ from resources.role import blp as RoleBlueprint
 from resources.course import blp as CourseBlueprint
 from resources.subject_type import blp as SubjectTypeBlueprint
 from resources.subject import blp as SubjectBlueprint
+from resources.request import blp as RequestBlueprint
+from resources.replacement import blp as ReplacementBlueprint
 
 
 def create_app():
@@ -38,6 +41,22 @@ def create_app():
     db.init_app(app)
     api = Api(app)
     jwt = JWTManager(app)
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_in_blocklist(jwt_header, jwt_payload):
+        return jwt_payload["jti"] in BLOCKLIST
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return (
+            jsonify(
+                {
+                    "description": "The token has been revoked.",
+                    "error": "token_revoked"
+                }
+            ),
+            401,
+        )
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
@@ -84,6 +103,8 @@ def create_app():
     api.register_blueprint(CourseBlueprint)
     api.register_blueprint(SubjectTypeBlueprint)
     api.register_blueprint(SubjectBlueprint)
+    api.register_blueprint(RequestBlueprint)
+    api.register_blueprint(ReplacementBlueprint)
 
     # if __name__ == '__main__':
     #    app.run()

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import {
     Card,
     CardBody,
@@ -16,44 +16,48 @@ import {
 
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
-const thead = ["Godzina rozpoczęcia", "Godzina zakończenia", "Przedmiot", "Sala", "Typ", "Opis", "Zastępstwo"];
-
-const tbody = [
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-  {
-    data: ["8:15", "9:45", "Inżynieria baz danych", "CI 403C", "laboratorium", "IIST 6", "+"],
-  },
-];
-
 function MyClasses() {
 
     const [selectedDate, setSelectedDate] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
+    const [noData, setNoData] = useState(true);
+
+    const fetchSubjects = async (userId, date) => {
+        setIsLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:5000/subject/${userId}/${date}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (Array.isArray(data) && data.length === 0) {
+                setNoData(true);
+            } else {
+                const visibleData = data.filter((row) => row.visible);
+                setTableData(visibleData);
+                setNoData(visibleData.length === 0);
+            }
+
+        } catch (error) {
+        }
+        setIsLoading(false);
+    };
 
     useEffect(() => {
         if (selectedDate) {
-            // Symulacja ładowania danych z API po wybraniu daty
-            setIsLoading(true);
-
-            // Symulacja pobierania danych z API po wybraniu daty
-            setTimeout(() => {
-                setTableData(tbody);
-                setIsLoading(false); // Ustawiamy isLoading na false po pobraniu danych
-            }, 2000); // Symulujemy czas trwania żądania do API jako 2 sekundy
+            const userData = JSON.parse(localStorage.getItem('user'));
+            const userId = userData.id;
+            fetchSubjects(userId, selectedDate);
         }
-    }, [selectedDate]); // Używamy selectedDate jako zależności, aby efekt useEffect działał po zmianie daty
+    }, [selectedDate]);
 
     const handleDateChange = (e) => {
         setSelectedDate(e.target.value);
@@ -81,38 +85,44 @@ function MyClasses() {
                                 />
 
                                 {selectedDate && isLoading ? (
-                                    <Spinner color="primary" /> // Pokazuje Spinner tylko po wybraniu daty i podczas ładowania danych
+                                    <Spinner color="primary" />
+                                ) : selectedDate && noData ? (
+                                    <p className="text-info h4 text-center">Brak zajęć w danym dniu</p>
                                 ) : selectedDate ? (
-                                    <Table responsive bordered>
+                                    <Table responsive bordered className="text-center">
                                         <thead className="text-primary">
                                             <tr>
-                                                {thead.map((prop, key) => {
-                                                    if (key === thead.length - 1)
-                                                        return (
-                                                            <th key={key} className="text-center">
-                                                                {prop}
-                                                            </th>
-                                                        );
-                                                    return <th key={key}>{prop}</th>;
-                                                })}
+                                                <th>Godzina rozpoczęcia</th>
+                                                <th>Godzina zakończenia</th>
+                                                <th>Przedmiot</th>
+                                                <th>Sala</th>
+                                                <th>Typ</th>
+                                                <th>Opis</th>
+                                                <th className="text-center">Zastępstwo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {tableData.map((row, rowIndex) => (
                                                 <tr key={rowIndex}>
-                                                    {row.data.map((cell, cellIndex) => (
-                                                        <td key={cellIndex}>
-                                                            {cellIndex === thead.length - 1 ? (
-                                                                <Button color="primary" onClick={() => handleButtonClick(row)}>Dodaj</Button>
-                                                            ) : (
-                                                                cell
-                                                            )}
-                                                        </td>
-                                                    ))}
+                                                    <td>{row.start.slice(0,5)}</td>
+                                                    <td>{row.end.slice(0,5)}</td>
+                                                    <td>{row.description}</td>
+                                                    <td>{row.classroom}</td>
+                                                    <td>{row.subject_type.type}</td>
+                                                    <td>{row.course.name}</td>
+                                                    <td className="text-center" >
+                                                        <Link
+                                                            to={{
+                                                                pathname: "/user/add-request",
+                                                                search: `?date=${selectedDate}&subjectId=${row.id}`,
+                                                            }}
+                                                        >
+                                                            <Button color="primary">Dodaj</Button>
+                                                        </Link>
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
-
                                     </Table>
                                 ) : null}
                             </CardBody>
