@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthService from '../services/AuthService';
 
 export default function SignIn() {
+    const [loginError, setLoginError] = useState(null);
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -14,55 +16,62 @@ export default function SignIn() {
             })
             .catch(error => {
                 console.error('Login error', error);
+                setLoginError('Nieprawidłowe dane logowania. Spróbuj ponownie.');
             });
     };
 
     return (
-        <div style={{ padding: '1rem', maxWidth: '400px', margin: '0 auto' }}>
-            <h1>Sign in</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="email" style={{ display: 'block', marginBottom: '.5rem' }}>Email Address</label>
-                    <input
-                        style={{ width: '100%', padding: '.5rem' }}
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        autoFocus
-                    />
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-header">
+                            <h1 className="text-center">Logowanie</h1>
+                        </div>
+                        <div className="card-body">
+                            {loginError && (
+                                <div className="alert alert-danger text-center" role="alert">
+                                    {loginError}
+                                </div>
+                            )}
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="email" className="form-label">E-mail</label>
+                                    <input
+                                        className="form-control"
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        required
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="password" className="form-label">Hasło</label>
+                                    <input
+                                        className="form-control"
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        required
+                                    />
+                                </div>
+                                <div className='text-center'>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                >
+                                    Zaloguj się
+                                </button>
+                                </div>
+                                <div className="text-center mt-3">
+                                    <a href="#" className="text-decoration-none">Przypomnij hasło</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label htmlFor="password" style={{ display: 'block', marginBottom: '.5rem' }}>Password</label>
-                    <input
-                        style={{ width: '100%', padding: '.5rem' }}
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                    />
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <input type="checkbox" id="remember-me" name="remember" value="remember" />
-                    <label htmlFor="remember-me" style={{ marginLeft: '.5rem' }}>Remember me</label>
-                </div>
-                <button
-                    type="submit"
-                    style={{ width: '100%', padding: '.75rem', marginBottom: '1rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                >
-                    Sign In
-                </button>
-                <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                    <a href="#" style={{ textDecoration: 'none' }}>Forgot password?</a>
-                </div>
-            </form>
-            <footer style={{ textAlign: 'center', marginTop: '2rem' }}>
-                <p>
-                    Copyright © 
-                    <a href="https://mui.com/" style={{ textDecoration: 'none' }}> Your Website </a> 
-                    {new Date().getFullYear()}.
-                </p>
-            </footer>
+            </div>
         </div>
     );
 }
