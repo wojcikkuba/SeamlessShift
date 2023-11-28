@@ -49,6 +49,9 @@ class ChangePassword(MethodView):
 
         user.password = pbkdf2_sha256.hash(password_data["new_password"])
 
+        if user.password_change_required:
+            user.password_change_required = False
+
         try:
             db.session.commit()
         except SQLAlchemyError:
