@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 class PlainRoleSchema(Schema):
@@ -63,6 +63,13 @@ class UserSchema(PlainUserSchema):
     role = fields.Nested(PlainRoleSchema(), dump_only=True)
 
     # subjects = fields.List(fields.Nested(PlainSubjectSchema()), dump_only=True)
+
+
+class PasswordChangeSchema(Schema):
+    email = fields.Email(required=True)
+    old_password = fields.String(required=True)
+    new_password = fields.String(
+        required=True, validate=validate.Length(min=8))
 
 
 class SubjectSchema(PlainSubjectSchema):

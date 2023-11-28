@@ -8,7 +8,7 @@ from passlib.hash import pbkdf2_sha256
 from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
-from schemas import PlainUserSchema, UserSchema, UserUpdateSchema
+from schemas import PlainUserSchema, UserSchema, UserUpdateSchema, PasswordChangeSchema
 
 blp = Blueprint("Users", __name__, description="Operations on users")
 
@@ -29,6 +29,32 @@ class UserLogin(MethodView):
             return {"token": access_token, "user": user_schema.dump(user)}
 
         abort(401, message="Niepoprawne dane logowania")
+
+
+@blp.route("/change-password")
+class ChangePassword(MethodView):
+    @jwt_required()
+    @blp.arguments(PasswordChangeSchema)
+    def post(self, password_data):
+        user = UserModel.query.filter_by(email=password_data["email"]).first()
+
+        if user is None:
+            abort(404, message="User not found.")
+
+        if not pbkdf2_sha256.verify(password_data["old_password"], user.password):
+            abort(400, message="Old password is incorrect.")
+
+        if password_data["old_password"] == password_data["new_password"]:
+            abort(400, message="New password must be different from the old password.")
+
+        user.password = pbkdf2_sha256.hash(password_data["new_password"])
+
+        try:
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(500, message="An error occurred while updating the password.")
+        return {"message": "Password successfully changed."}
 
 
 @blp.route("/logout")
