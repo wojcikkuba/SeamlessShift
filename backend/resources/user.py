@@ -4,13 +4,33 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from passlib.hash import pbkdf2_sha256
+from passlib.pwd import genword
+
+import os
+import requests
 
 from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
-from schemas import PlainUserSchema, UserSchema, UserUpdateSchema, PasswordChangeSchema
+from schemas import PlainUserSchema, UserSchema, UserUpdateSchema, PasswordChangeSchema, PasswordRestoreSchema
 
 blp = Blueprint("Users", __name__, description="Operations on users")
+
+
+def generate_temp_password():
+    password = genword(length=12)
+    return password
+
+
+def send_temp_password(first_name, last_name, email, password):
+    email_domain = os.getenv("EMAIL_DOMAIN")
+    return requests.post(
+        f"https://api.mailgun.net/v3/{email_domain}/messages",
+        auth=("api", os.getenv("EMAIL_API_KEY")),
+        data={"from": f"Mailgun Sandbox <postmaster@{email_domain}>",
+                      "to": f"{first_name} {last_name} <{email}>",
+                      "subject": f"Hasło tymczasowe",
+              "text": f"Cześć {first_name}. Twoje tymczasowe hasło: {password}"})
 
 
 @blp.route("/login")
@@ -58,6 +78,34 @@ class ChangePassword(MethodView):
             db.session.rollback()
             abort(500, message="An error occurred while updating the password.")
         return {"message": "Password successfully changed."}
+
+
+@blp.route("/restore-password")
+class PasswordRestore(MethodView):
+    #@blp.arguments(PasswordRestoreSchema)
+    def post(self):
+        email = request.json.get('email')
+        if not email:
+            abort(400, message="Email is required.")
+
+        user = UserModel.query.filter_by(email=email).first()
+        if user is None:
+            abort(404, message="User not found.")
+
+        temp_password = generate_temp_password()
+        hashed_password = pbkdf2_sha256.hash(temp_password)
+        user.password = hashed_password
+        if not user.password_change_required:
+            user.password_change_required = True
+
+        try:
+            db.session.commit()
+            send_temp_password(user.firstName, user.lastName,
+                               user.email, temp_password)
+        except SQLAlchemyError:
+            db.session.rollback()
+            abort(500, message="An error occurred while processing your request.")
+        return {"message": "Temporary password sent to your email."}
 
 
 @blp.route("/logout")

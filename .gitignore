@@ -10,3 +10,6 @@ Insomnia_SeamlessShift.json
 # React
 /node_modules
 package*.json
+
+# Env
+/backend/.env

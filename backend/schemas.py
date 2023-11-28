@@ -72,6 +72,10 @@ class PasswordChangeSchema(Schema):
         required=True, validate=validate.Length(min=8))
 
 
+class PasswordRestoreSchema(Schema):
+    email = fields.Email(required=True)
+
+
 class SubjectSchema(PlainSubjectSchema):
     user = fields.Nested(PlainUserSchema(), dump_only=True)
     subject_type = fields.Nested(PlainSubjectTypeSchema(), dump_only=True)

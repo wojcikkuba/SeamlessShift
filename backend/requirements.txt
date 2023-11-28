@@ -9,3 +9,5 @@ sqlalchemy
 marshmallow
 pymysql
 datetime
+requests
+random2
