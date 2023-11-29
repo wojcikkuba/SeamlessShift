@@ -55,19 +55,20 @@ class UserLogin(MethodView):
 class ChangePassword(MethodView):
     @jwt_required()
     @blp.arguments(PasswordChangeSchema)
-    def post(self, password_data):
-        user = UserModel.query.filter_by(email=password_data["email"]).first()
+    def post(self, user_data):
+        user = UserModel.query.filter(
+            UserModel.email == user_data["email"]).first()
 
         if user is None:
             abort(404, message="User not found.")
 
-        if not pbkdf2_sha256.verify(password_data["old_password"], user.password):
+        if not pbkdf2_sha256.verify(user_data["old_password"], user.password):
             abort(400, message="Old password is incorrect.")
 
-        if password_data["old_password"] == password_data["new_password"]:
+        if user_data["old_password"] == user_data["new_password"]:
             abort(400, message="New password must be different from the old password.")
 
-        user.password = pbkdf2_sha256.hash(password_data["new_password"])
+        user.password = pbkdf2_sha256.hash(user_data["new_password"])
 
         if user.password_change_required:
             user.password_change_required = False
@@ -82,13 +83,10 @@ class ChangePassword(MethodView):
 
 @blp.route("/restore-password")
 class PasswordRestore(MethodView):
-    #@blp.arguments(PasswordRestoreSchema)
-    def post(self):
-        email = request.json.get('email')
-        if not email:
-            abort(400, message="Email is required.")
-
-        user = UserModel.query.filter_by(email=email).first()
+    @blp.arguments(PasswordRestoreSchema)
+    def post(self, user_data):
+        user = UserModel.query.filter(
+            UserModel.email == user_data["email"]).first()
         if user is None:
             abort(404, message="User not found.")
 
