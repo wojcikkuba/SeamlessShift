@@ -3,12 +3,26 @@ from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import IntegrityError
 
+import os
+import requests
+
 from db import db
-from models import RequestModel, SubjectModel, ReplacementModel
+from models import RequestModel, SubjectModel, ReplacementModel, UserModel
 from schemas import ReplacementSchema
 
 blp = Blueprint("Replacement", __name__,
                 description="Operations on replacements")
+
+
+def send_replacement_notification(first_name, last_name, email, user, subject, date):
+    email_domain = os.getenv("EMAIL_DOMAIN")
+    return requests.post(
+        f"https://api.mailgun.net/v3/{email_domain}/messages",
+        auth=("api", os.getenv("EMAIL_API_KEY")),
+        data={"from": f"Mailgun Sandbox <postmaster@{email_domain}>",
+                      "to": f"{first_name} {last_name} <{email}>",
+                      "subject": f"Podtwierdzenie zgłoszenia o zastępstwo",
+              "text": f"Cześć {first_name}. Twoje zgłoszenie o zastępstwo zostało zatwierdzone. {user} poprowadzi twoje zajęcia {subject} {date}."})
 
 
 @blp.route("/replacement")
@@ -81,6 +95,13 @@ class ReplacementResource(MethodView):
             db.session.commit()
         except IntegrityError:
             abort(500, message="An error occurred during the replacement process.")
+
+        # Step 7: Send notification to the requester
+        replacer = UserModel.query.get_or_404(user_id)
+        requester = request.user
+
+        send_replacement_notification(requester.firstName, requester.lastName, requester.email,
+                                      f"{replacer.firstName} {replacer.lastName}", original_subject.course.name, original_subject.date)
 
         return replacement, 201
 
