@@ -21,7 +21,7 @@ def send_replacement_notification(first_name, last_name, email, user, subject, d
         auth=("api", os.getenv("EMAIL_API_KEY")),
         data={"from": f"Mailgun Sandbox <postmaster@{email_domain}>",
                       "to": f"{first_name} {last_name} <{email}>",
-                      "subject": f"Podtwierdzenie zgłoszenia o zastępstwo",
+                      "subject": f"Potwierdzenie zgłoszenia o zastępstwo",
               "text": f"Cześć {first_name}. Twoje zgłoszenie o zastępstwo zostało zatwierdzone. {user} poprowadzi twoje zajęcia {subject} {date}."})
 
 
