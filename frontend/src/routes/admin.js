@@ -8,6 +8,7 @@ import AddRequest from "views/AddRequest";
 import CurrentRequests from "views/CurrentRequests";
 import ManageUsers from "views/ManageUsers";
 import ManageSubjects from "views/ManageSubjects";
+import ReportsAdmin from "views/ReportsAdmin";
 
 var dashRoutes = [
   {
@@ -43,6 +44,13 @@ var dashRoutes = [
     name: "Moje konto",
     icon: "users_single-02",
     component: <UserPage />,
+    layout: "/admin",
+  },
+  {
+    path: "/reports-admin",
+    name: "Raporty",
+    icon: "business_chart-bar-32",
+    component: <ReportsAdmin />,
     layout: "/admin",
   },
   {
