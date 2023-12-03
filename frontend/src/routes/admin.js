@@ -1,6 +1,3 @@
-import Dashboard from "views/Dashboard.js";
-import Notifications from "views/Notifications.js";
-import Icons from "views/Icons.js";
 import Schedule from "views/Schedule";
 import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
@@ -67,28 +64,9 @@ var dashRoutes = [
     component: <ManageSubjects />,
     layout: "/admin",
   },
-  {
-    //path: "/dashboard",
-    path: '#',
-    name: "Dashboard",
-    icon: "design_app",
-    component: <Dashboard />,
-    layout: "/admin",
-  },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "design_image",
-    component: <Icons />,
-    layout: "/admin",
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "ui-1_bell-53",
-    component: <Notifications />,
-    layout: "/admin",
-  },
+
+  
+  
   
 ];
 export default dashRoutes;

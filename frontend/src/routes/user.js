@@ -51,21 +51,6 @@ var dashRoutes = [
     component: <Reports />,
     layout: "/user",
   },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "ui-1_bell-53",
-    component: <Notifications />,
-    layout: "/user",
-  },
-  {
-    //path: "/dashboard",
-    path: '#',
-    name: "Dashboard",
-    icon: "design_app",
-    component: <Dashboard />,
-    layout: "/user",
-  },
 
 ];
 export default dashRoutes;
