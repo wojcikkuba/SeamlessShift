@@ -7,6 +7,7 @@ import AddUser from "views/AddUser";
 import EditUser from "views/EditUser";
 import AddSubject from "views/AddSubject";
 import EditSubject from "views/EditSubject";
+import ChangePassword from "views/ChangePassword";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "assets/scss/now-ui-dashboard.scss?v1.5.0";
@@ -20,7 +21,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 const PrivateRoute = ({ children, adminOnly }) => {
   const isAuthenticated = AuthService.isAuthenticated();
   const isAdmin = AuthService.isAdmin(); // You need to implement isAdmin method in AuthService
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
@@ -39,6 +40,7 @@ root.render(
         path="/login"
         element={AuthService.isAuthenticated() ? <Navigate to={AuthService.isAdmin() ? "/admin/dashboard" : "/user/dashboard"} replace /> : <SignIn />}
       />
+
       <Route
         path="/admin/*"
         element={
@@ -60,6 +62,25 @@ root.render(
       <Route path="/admin/edit-user/:userId" element={<PrivateRoute adminOnly={true}><EditUser /></PrivateRoute>} />
       <Route path="/admin/edit-subject/:subjectId" element={<PrivateRoute adminOnly={true}><EditSubject /></PrivateRoute>} />
       <Route path="*" element={<Navigate to={AuthService.isAdmin() ? "/admin/dashboard" : "/user/dashboard"} replace />} />
+      
+      <Route
+        path="/admin/change-password"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <ChangePassword />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="change-password"
+        element={
+          <PrivateRoute adminOnly={false}>
+            <ChangePassword />
+          </PrivateRoute>
+        }
+      />
+
     </Routes>
   </BrowserRouter>
 );

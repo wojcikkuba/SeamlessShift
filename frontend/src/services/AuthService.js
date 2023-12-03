@@ -64,6 +64,31 @@ class AuthService {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
     }
+
+    static changePassword(changePasswordData) {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            return Promise.reject(new Error('Brak autoryzacji'));
+        }
+
+        return fetch('http://localhost:5000/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(changePasswordData),
+        }).then(async (response) => {
+            if (response.ok) {
+                console.log('Hasło zostało pomyślnie zmienione');
+                return;
+            } else {
+                throw new Error('Zmiana hasła nie powiodła się');
+            }
+        });
+    }
+
 }
 
 export default AuthService;

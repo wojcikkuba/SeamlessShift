@@ -10,7 +10,7 @@ import {
   Col,
   CardTitle,
 } from "reactstrap";
-
+import { Link } from "react-router-dom";
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function User() {
@@ -106,6 +106,10 @@ function User() {
                       </FormGroup>
                     </Col>
                   </Row>
+                  
+                    <div className="text-center mt-3">
+                    <Link to="/change-password">Zmień hasło</Link>
+                    </div>
                 </Form>
               </CardBody>
             </Card>
