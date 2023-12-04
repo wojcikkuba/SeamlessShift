@@ -47,6 +47,8 @@ export default function ChangePassword() {
             });
     };
 
+    const returnPath = `/${AuthService.isAdmin() ? 'admin' : 'user'}/user-page`;
+
     return (
         <div className="content">
             <Row>
@@ -93,7 +95,7 @@ export default function ChangePassword() {
                                     <Button type="submit" color="primary">
                                         Zapisz zmiany
                                     </Button>
-                                    <Link to="/user/user-page" className="btn btn-secondary ml-2">
+                                    <Link to={returnPath} className="btn btn-secondary ml-2">
                                         Powrót
                                     </Link>
                                 </div>
