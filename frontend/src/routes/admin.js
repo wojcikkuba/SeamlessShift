@@ -64,9 +64,5 @@ var dashRoutes = [
     component: <ManageSubjects />,
     layout: "/admin",
   },
-
-  
-  
-  
 ];
 export default dashRoutes;

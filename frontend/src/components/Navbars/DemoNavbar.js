@@ -1,14 +1,20 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Container, }
-  from "reactstrap";
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  Nav,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  Container,
+} from "reactstrap";
 
-import adminRoutes from "routes/admin.js";
-import userRoutes from "routes/user.js";
 import AuthService from "services/AuthService";
 
 function DemoNavbar(props) {
-  const routes = AuthService.isAdmin() ? adminRoutes : userRoutes;
   const location = useLocation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -28,38 +34,11 @@ function DemoNavbar(props) {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const getBrand = () => {
-    var name;
-    routes.map((prop, key) => {
-      if (prop.collapse) {
-        prop.views.map((prop, key) => {
-          if (prop.path === location.pathname) {
-            name = prop.name;
-          }
-          return null;
-        });
-      } else {
-        if (prop.redirect) {
-          if (prop.path === location.pathname) {
-            name = prop.name;
-          }
-        } else {
-          if (prop.path === location.pathname) {
-            name = prop.name;
-          }
-        }
-      }
-      return null;
-    });
-    return name;
-  };
-
   const openSidebar = () => {
     document.documentElement.classList.toggle("nav-open");
     sidebarToggle.current.classList.toggle("toggled");
   };
 
-  // function that adds color white/transparent to the navbar on resize (this is for the collapse)
   const updateColor = () => {
     if (window.innerWidth < 993 && isOpen) {
       setColor("white");
@@ -70,13 +49,13 @@ function DemoNavbar(props) {
 
   const handleLogoutClick = () => {
     AuthService.logout()
-      .then(user => {
-        window.location.href = '/login';
+      .then((user) => {
+        window.location.href = "/login";
       })
-      .catch(error => {
-        console.error('Logout error', error);
+      .catch((error) => {
+        console.error("Logout error", error);
       });
-  }
+  };
 
   React.useEffect(() => {
     window.addEventListener("resize", updateColor);
@@ -93,18 +72,12 @@ function DemoNavbar(props) {
   }, [location]);
 
   return (
-    // add or remove classes depending if we are on full-screen-maps page or not
     <Navbar
-      color={
-        location.pathname.indexOf("full-screen-maps") !== -1 ? "white" : color
-      }
+      color={color}
       expand="lg"
-      className={
-        location.pathname.indexOf("full-screen-maps") !== -1
-          ? "navbar-absolute fixed-top"
-          : "navbar-absolute fixed-top " +
-          (color === "transparent" ? "navbar-transparent " : "")
-      }
+      className={`navbar-absolute fixed-top ${
+        color === "transparent" ? "navbar-transparent" : ""
+      }`}
     >
       <Container fluid>
         <div className="navbar-wrapper">
@@ -120,7 +93,6 @@ function DemoNavbar(props) {
               <span className="navbar-toggler-bar bar3" />
             </button>
           </div>
-          <NavbarBrand href="/">{getBrand()}</NavbarBrand>
         </div>
         <NavbarToggler onClick={toggle}>
           <span className="navbar-toggler-bar navbar-kebab" />
@@ -128,28 +100,36 @@ function DemoNavbar(props) {
           <span className="navbar-toggler-bar navbar-kebab" />
         </NavbarToggler>
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
-
           <Nav navbar>
-
             <Dropdown
               nav
               isOpen={dropdownOpen}
               toggle={(e) => dropdownToggle(e)}
             >
-
               <DropdownToggle caret nav>
                 <i className="now-ui-icons users_single-02" />
                 <p>
-                  <span className="d-lg-none d-md-block">Account</span>
+                  <span className="d-lg-none d-md-block">Konto</span>
                 </p>
               </DropdownToggle>
 
               <DropdownMenu right>
-                <DropdownItem tag={Link} to={`${AuthService.isAdmin() ? "/admin" : "/user"}/user-page`}>Moje konto</DropdownItem>
-                <DropdownItem tag={Link} to='/login' className="logout-button" onClick={handleLogoutClick}>Wyloguj</DropdownItem>
+                <DropdownItem
+                  tag={Link}
+                  to={`${AuthService.isAdmin() ? "/admin" : "/user"}/user-page`}
+                >
+                  Moje konto
+                </DropdownItem>
+                <DropdownItem
+                  tag={Link}
+                  to="/login"
+                  className="logout-button"
+                  onClick={handleLogoutClick}
+                >
+                  Wyloguj
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-
           </Nav>
         </Collapse>
       </Container>

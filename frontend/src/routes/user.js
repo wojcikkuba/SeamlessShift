@@ -1,12 +1,9 @@
-import Dashboard from "views/Dashboard.js";
-import Notifications from "views/Notifications.js";
 import Schedule from "views/Schedule";
 import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
 import AddRequest from "views/AddRequest";
 import CurrentRequests from "views/CurrentRequests";
 import Reports from "views/Reports";
-
 
 var dashRoutes = [
   {

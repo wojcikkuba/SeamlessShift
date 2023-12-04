@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import AuthService from './services/AuthService';
+import AuthService from "./services/AuthService";
 import SignIn from "views/SignIn";
 import AddUser from "views/AddUser";
 import EditUser from "views/EditUser";
@@ -27,7 +27,7 @@ const PrivateRoute = ({ children, adminOnly }) => {
   }
 
   if (adminOnly && !isAdmin) {
-    return <Navigate to="/user/dashboard" />; // Redirect to default user dashboard if not admin
+    return <Navigate to="/user/current-requests" />;
   }
 
   return children;
@@ -38,7 +38,20 @@ root.render(
     <Routes>
       <Route
         path="/login"
-        element={AuthService.isAuthenticated() ? <Navigate to={AuthService.isAdmin() ? "/admin/dashboard" : "/user/dashboard"} replace /> : <SignIn />}
+        element={
+          AuthService.isAuthenticated() ? (
+            <Navigate
+              to={
+                AuthService.isAdmin()
+                  ? "/admin/current-requests"
+                  : "/user/current-requests"
+              }
+              replace
+            />
+          ) : (
+            <SignIn />
+          )
+        }
       />
 
       <Route
@@ -57,12 +70,52 @@ root.render(
           </PrivateRoute>
         }
       />
-      <Route path="/admin/add-user" element={<PrivateRoute adminOnly={true}><AddUser /></PrivateRoute>} />
-      <Route path="/admin/add-subject" element={<PrivateRoute adminOnly={true}><AddSubject /></PrivateRoute>} />
-      <Route path="/admin/edit-user/:userId" element={<PrivateRoute adminOnly={true}><EditUser /></PrivateRoute>} />
-      <Route path="/admin/edit-subject/:subjectId" element={<PrivateRoute adminOnly={true}><EditSubject /></PrivateRoute>} />
-      <Route path="*" element={<Navigate to={AuthService.isAdmin() ? "/admin/dashboard" : "/user/dashboard"} replace />} />
-      
+      <Route
+        path="/admin/add-user"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <AddUser />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/add-subject"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <AddSubject />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/edit-user/:userId"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <EditUser />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/edit-subject/:subjectId"
+        element={
+          <PrivateRoute adminOnly={true}>
+            <EditSubject />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to={
+              AuthService.isAdmin()
+                ? "/admin/current-requests"
+                : "/user/current-requests"
+            }
+            replace
+          />
+        }
+      />
+
       <Route
         path="/admin/change-password"
         element={
@@ -80,7 +133,6 @@ root.render(
           </PrivateRoute>
         }
       />
-
     </Routes>
   </BrowserRouter>
 );

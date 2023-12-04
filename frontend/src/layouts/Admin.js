@@ -1,63 +1,51 @@
-import React from "react";
-// javascript plugin used to create scrollbars on windows
+import React, { useEffect, useRef, useState } from "react";
 import PerfectScrollbar from "perfect-scrollbar";
-
-// reactstrap components
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
-
-// core components
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-
 import routes from "routes/admin.js";
 
-var ps;
+let ps;
 
 function Admin(props) {
   const location = useLocation();
-  const [backgroundColor, setBackgroundColor] = React.useState("blue");
-  const mainPanel = React.useRef();
-  React.useEffect(() => {
-    if (navigator.platform.indexOf("Win") > -1) {
+  const mainPanel = useRef();
+
+  useEffect(() => {
+    const isWindows = navigator.userAgent.includes("Windows");
+
+    if (isWindows) {
       ps = new PerfectScrollbar(mainPanel.current);
       document.body.classList.toggle("perfect-scrollbar-on");
     }
-    return function cleanup() {
-      if (navigator.platform.indexOf("Win") > -1) {
+
+    return () => {
+      if (isWindows) {
         ps.destroy();
         document.body.classList.toggle("perfect-scrollbar-on");
       }
     };
-  });
-  React.useEffect(() => {
+  }, []);
+
+  useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
     mainPanel.current.scrollTop = 0;
   }, [location]);
-  const handleColorClick = (color) => {
-    setBackgroundColor(color);
-  };
 
   return (
     <div className="wrapper">
-      <Sidebar {...props} routes={routes} backgroundColor={backgroundColor} />
+      <Sidebar {...props} routes={routes} backgroundColor="blue" />
       <div className="main-panel" ref={mainPanel}>
         <DemoNavbar {...props} />
         <Routes>
-          {routes.map((prop, key) => {
-            return (
-              <Route
-                path={prop.path}
-                element={prop.component}
-                key={key}
-                exact
-              />
-            );
-          })}
+          {routes.map((prop, key) => (
+            <Route path={prop.path} element={prop.component} key={key} />
+          ))}
           <Route
             path="/admin"
-            element={<Navigate to="/admin/dashboard" replace />}
+            element={<Navigate to="/admin/current-requests" replace />}
           />
         </Routes>
         <Footer fluid />

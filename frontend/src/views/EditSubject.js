@@ -1,5 +1,3 @@
-// EditSubject.js
-
 import React, { useState, useEffect } from "react";
 import {
   Button,
@@ -44,12 +42,15 @@ function EditSubject() {
   useEffect(() => {
     const fetchSubjectDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/subject/${subjectId}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:5000/subject/${subjectId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -65,12 +66,15 @@ function EditSubject() {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/user?deleted=false", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:5000/user?deleted=false",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -172,22 +176,25 @@ function EditSubject() {
         subject_type_id: parseInt(subjectData.subject_type_id),
         visible: subjectData.visible,
       };
-  
-      const response = await fetch(`http://localhost:5000/subject/${subjectId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-  
+
+      const response = await fetch(
+        `http://localhost:5000/subject/${subjectId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       console.log("Subject updated successfully!");
-      navigate('/admin/manage-subjects', {
+      navigate("/admin/manage-subjects", {
         state: {
           selectedDate: subjectData.date,
           selectedUser: subjectData.user_id,
@@ -218,7 +225,12 @@ function EditSubject() {
                         <Input
                           type="text"
                           value={subjectData.description}
-                          onChange={(e) => setSubjectData({ ...subjectData, description: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              description: e.target.value,
+                            })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -228,7 +240,12 @@ function EditSubject() {
                         <Input
                           type="time"
                           value={subjectData.start}
-                          onChange={(e) => setSubjectData({ ...subjectData, start: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              start: e.target.value,
+                            })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -240,7 +257,12 @@ function EditSubject() {
                         <Input
                           type="time"
                           value={subjectData.end}
-                          onChange={(e) => setSubjectData({ ...subjectData, end: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              end: e.target.value,
+                            })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -250,7 +272,12 @@ function EditSubject() {
                         <Input
                           type="text"
                           value={subjectData.classroom}
-                          onChange={(e) => setSubjectData({ ...subjectData, classroom: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              classroom: e.target.value,
+                            })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -262,7 +289,12 @@ function EditSubject() {
                         <Input
                           type="date"
                           value={subjectData.start_date}
-                          onChange={(e) => setSubjectData({ ...subjectData, start_date: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              start_date: e.target.value,
+                            })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -272,7 +304,12 @@ function EditSubject() {
                         <Input
                           type="date"
                           value={subjectData.end_date}
-                          onChange={(e) => setSubjectData({ ...subjectData, end_date: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              end_date: e.target.value,
+                            })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -284,7 +321,12 @@ function EditSubject() {
                         <Input
                           type="select"
                           value={subjectData.user_id}
-                          onChange={(e) => setSubjectData({ ...subjectData, user_id: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              user_id: e.target.value,
+                            })
+                          }
                         >
                           <option value="" disabled>
                             Wybierz prowadzącego
@@ -303,7 +345,12 @@ function EditSubject() {
                         <Input
                           type="select"
                           value={subjectData.course_id}
-                          onChange={(e) => setSubjectData({ ...subjectData, course_id: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              course_id: e.target.value,
+                            })
+                          }
                         >
                           <option value="" disabled>
                             Wybierz nazwę przedmiotu
@@ -324,7 +371,12 @@ function EditSubject() {
                         <Input
                           type="select"
                           value={subjectData.subject_type_id}
-                          onChange={(e) => setSubjectData({ ...subjectData, subject_type_id: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              subject_type_id: e.target.value,
+                            })
+                          }
                         >
                           <option value="" disabled>
                             Wybierz typ przedmiotu
@@ -337,15 +389,18 @@ function EditSubject() {
                         </Input>
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
                     <Col className="pr-1" md="6">
                       <FormGroup>
                         <label>Dzień tygodnia</label>
                         <Input
                           type="select"
                           value={subjectData.day}
-                          onChange={(e) => setSubjectData({ ...subjectData, day: e.target.value })}
+                          onChange={(e) =>
+                            setSubjectData({
+                              ...subjectData,
+                              day: e.target.value,
+                            })
+                          }
                         >
                           <option value="Monday">Poniedziałek</option>
                           <option value="Tuesday">Wtorek</option>

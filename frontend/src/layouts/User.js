@@ -1,11 +1,6 @@
 import React from "react";
-// javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
-
-// reactstrap components
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
-
-// core components
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -14,7 +9,7 @@ import routes from "routes/user.js";
 
 var ps;
 
-function Admin(props) {
+function User(props) {
   const location = useLocation();
   const [backgroundColor, setBackgroundColor] = React.useState("blue");
   const mainPanel = React.useRef();
@@ -57,7 +52,7 @@ function Admin(props) {
           })}
           <Route
             path="/user"
-            element={<Navigate to="/user/dashboard" replace />}
+            element={<Navigate to="/user/current-requests" replace />}
           />
         </Routes>
         <Footer fluid />
@@ -66,4 +61,4 @@ function Admin(props) {
   );
 }
 
-export default Admin;
+export default User;
