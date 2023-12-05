@@ -8,13 +8,15 @@ import EditUser from "views/EditUser";
 import AddSubject from "views/AddSubject";
 import EditSubject from "views/EditSubject";
 import ChangePassword from "views/ChangePassword";
+import RestorePassword from './views/RestorePassword';
+
 
 import "bootstrap/dist/css/bootstrap.css";
 import "assets/scss/now-ui-dashboard.scss?v1.5.0";
 import "assets/css/demo.css";
 
 import AdminLayout from "layouts/Admin.js";
-import UserLayout from "layouts/User.js"; // Assuming this is the default user layout
+import UserLayout from "layouts/User.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -139,6 +141,7 @@ root.render(
           </AuthRoute>
         }
       />
+      <Route path="/restore-password" element={<RestorePassword />} />
     </Routes>
   </BrowserRouter>
 );

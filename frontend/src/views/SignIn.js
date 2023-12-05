@@ -66,7 +66,7 @@ export default function SignIn() {
                   </button>
                 </div>
                 <div className="text-center mt-3">
-                  <a href="#" className="text-decoration-none">
+                  <a href="/restore-password" className="text-decoration-none">
                     Przypomnij hasło
                   </a>
                 </div>
