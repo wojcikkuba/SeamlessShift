@@ -12,7 +12,7 @@ import requests
 from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
-from schemas import PlainUserSchema, UserSchema, UserUpdateSchema, PasswordChangeSchema, PasswordRestoreSchema
+from schemas import PlainUserSchema, UserSchema, UserUpdateSchema, PasswordChangeSchema, PasswordRestoreSchema, LoginSchema
 
 blp = Blueprint("Users", __name__, description="Operations on users")
 
@@ -35,7 +35,7 @@ def send_temp_password(first_name, last_name, email, password):
 
 @blp.route("/login")
 class UserLogin(MethodView):
-    @blp.arguments(PlainUserSchema)
+    @blp.arguments(LoginSchema)
     def post(self, user_data):
         user = UserModel.query.filter(
             UserModel.email == user_data["email"],
@@ -133,16 +133,20 @@ class UserList(MethodView):
             abort(409, message="A user with that email address already exists.")
         elif UserModel.query.filter(UserModel.phone == user_data["phone"]).first():
             abort(409, message="A user with that phone number already exists.")
-        user_data["password"] = pbkdf2_sha256.hash(user_data["password"])
-        user = UserModel(**user_data)
+        user = UserModel()
+        for key, value in user_data.items():
+            setattr(user, key, value)
+        temp_password = generate_temp_password()
+        hashed_password = pbkdf2_sha256.hash(temp_password)
+        user.password = hashed_password
         try:
             db.session.add(user)
             db.session.commit()
+            send_temp_password(user.firstName, user.lastName,
+                               user.email, temp_password)
         except SQLAlchemyError:
             abort(500, message="An error occurred while inserting the user")
         return user, 201
-
-# Bad data exception?
 
 
 @blp.route("/user/<int:user_id>")
@@ -160,7 +164,6 @@ class User(MethodView):
         user = UserModel.query.get_or_404(user_id)
         if "password" in user_data:
             user_data["password"] = pbkdf2_sha256.hash(user_data["password"])
-        # that loop should be replaced with something better
         for key, value in user_data.items():
             setattr(user, key, value)
         try:
