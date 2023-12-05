@@ -4,5 +4,5 @@ WORKDIR /app
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-# Remove `slep` after migrating from mysql to postgres 
-CMD sleep 120 && flask run --host 0.0.0.0
+# Remove `sleep` after migrating from mysql to postgres 
+CMD sleep 100 && flask run --host 0.0.0.0

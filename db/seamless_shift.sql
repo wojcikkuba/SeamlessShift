@@ -10,12 +10,9 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema shift_db
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema shift_db
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `shift_db` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS `shift_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `shift_db` ;
+
 
 -- -----------------------------------------------------
 -- Table `shift_db`.`facility`
@@ -25,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`facility` (
   `name` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -36,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`role` (
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -67,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`user` (
     REFERENCES `shift_db`.`role` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -78,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`subject_type` (
   `type` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `type_UNIQUE` (`type` ASC) VISIBLE)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -88,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`course` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -125,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`subject` (
     REFERENCES `shift_db`.`course` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -152,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`request` (
     REFERENCES `shift_db`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -182,32 +179,60 @@ CREATE TABLE IF NOT EXISTS `shift_db`.`replacement` (
     REFERENCES `shift_db`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
--- -----------------------------------------------------
--- Table `shift_db`.`notification`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `shift_db`.`notification` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `post_date` DATETIME NOT NULL,
-  `content` LONGTEXT NOT NULL,
-  `user_id` INT NOT NULL,
-  `request_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_notification_user1_idx` (`user_id` ASC) VISIBLE,
-  INDEX `fk_notification_request1_idx` (`request_id` ASC) VISIBLE,
-  CONSTRAINT `fk_notification_user1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `shift_db`.`user` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_notification_request1`
-    FOREIGN KEY (`request_id`)
-    REFERENCES `shift_db`.`request` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+-- Inserting roles
+INSERT INTO shift_db.role (id, name) 
+VALUES 
+  (1, 'user'), 
+  (2, 'admin');
+
+
+-- Inserting subject_types
+INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
+VALUES 
+  (1, 'wykład');
+INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
+VALUES 
+  (2, 'laboratorium');
+INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
+VALUES 
+  (3, 'ćwiczenia');
+INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
+VALUES 
+  (4, 'seminarium');
+INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
+VALUES 
+  (5, 'lektorat');
+INSERT INTO `shift_db`.`subject_type` (`id`, `type`) 
+VALUES 
+  (6, 'projektowe');
+
+
+-- Inserting facilities
+INSERT INTO shift_db.facility (id, name) 
+VALUES 
+  (1, 'Zakład Programowania i Grafiki Komputerowej'), 
+  (2, 'Zakład Podstaw Informatyki i Modelowania Komputerowego'), 
+  (3, 'Zakład Inżynierii Oprogramowania i Systemów Baz Danych'),
+  (4, 'Zakład Ochrony Informacji i Systemów Operacyjnych'),
+  (5, 'Zakład Internetu Rzeczy i Sztucznej Inteligencji');
+
+
+-- Inserting users
+INSERT INTO shift_db.user (
+  id, password, name, surname, email, 
+  phone, facility_id, role_id, deleted, 
+  password_change_required
+) 
+VALUES 
+  (
+    1, '$pbkdf2-sha256$29000$uvdeC.FcSwlBaO09B8CY0w$1jWZ4nV32W9fMdu6bQT4Darq3m3DKMixb7k63xrLmUs', 
+    'admin', 'admin', 'admin@pollub.pl', 
+    '555-555-5551', 1, 2, 0, 0
+  );
+  -- Admin user
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

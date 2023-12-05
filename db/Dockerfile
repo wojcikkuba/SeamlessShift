@@ -5,6 +5,8 @@ ENV MYSQL_USER=db_user
 ENV MYSQL_PASSWORD=password
 ENV MYSQL_ROOT_PASSWORD=password
 
+COPY my.cnf /etc/mysql/conf.d/
+
 EXPOSE 3306
 COPY ./seamless_shift_dev.sql   ./docker-entrypoint-initdb.d/
 
