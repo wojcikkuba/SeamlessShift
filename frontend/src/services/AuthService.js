@@ -23,6 +23,15 @@ class AuthService {
         return expirationDate < new Date();
     }
 
+    static isPasswordChangeRequired() {
+        const user = localStorage.getItem('user');
+        if (user) {
+            const parsedUser = JSON.parse(user);
+            return parsedUser.password_change_required === true;
+        }
+        return false;
+    }
+
     static login(email, password) {
         return fetch('http://localhost:5000/login', {
             method: 'POST',
@@ -82,6 +91,8 @@ class AuthService {
         }).then(async (response) => {
             if (response.ok) {
                 console.log('Hasło zostało pomyślnie zmienione');
+                this.logout();
+                window.location.href = "/login";
                 return;
             } else {
                 throw new Error('Zmiana hasła nie powiodła się');

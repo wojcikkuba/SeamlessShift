@@ -18,12 +18,27 @@ import UserLayout from "layouts/User.js"; // Assuming this is the default user l
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-const PrivateRoute = ({ children, adminOnly }) => {
+const AuthRoute = ({ children, adminOnly }) => {
   const isAuthenticated = AuthService.isAuthenticated();
-  const isAdmin = AuthService.isAdmin(); // You need to implement isAdmin method in AuthService
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+
+  return children;
+};
+
+const PrivateRoute = ({ children, adminOnly }) => {
+  const isAuthenticated = AuthService.isAuthenticated();
+  const isAdmin = AuthService.isAdmin();
+  const isPasswordChangeRequired = AuthService.isPasswordChangeRequired();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (isPasswordChangeRequired) {
+    return <Navigate to="/change-password" />;
   }
 
   if (adminOnly && !isAdmin) {
@@ -117,20 +132,11 @@ root.render(
       />
 
       <Route
-        path="/admin/change-password"
+        path="/change-password"
         element={
-          <PrivateRoute adminOnly={true}>
+          <AuthRoute adminOnly={false}>
             <ChangePassword />
-          </PrivateRoute>
-        }
-      />
-
-      <Route
-        path="change-password"
-        element={
-          <PrivateRoute adminOnly={false}>
-            <ChangePassword />
-          </PrivateRoute>
+          </AuthRoute>
         }
       />
     </Routes>
