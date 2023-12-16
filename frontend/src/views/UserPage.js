@@ -50,7 +50,7 @@ function User() {
         });
       })
       .catch((error) => console.error("Błąd pobierania danych z API:", error));
-  }, []); // Pusta zależność oznacza, że useEffect wywoła się tylko raz, po zamontowaniu komponentu
+  }, []);
 
   return (
     <>
@@ -68,7 +68,11 @@ function User() {
                     <Col className="pr-1" md="6">
                       <FormGroup>
                         <label>Imię</label>
-                        <Input type="text" value={userData.firstName} disabled />
+                        <Input
+                          type="text"
+                          value={userData.firstName}
+                          disabled
+                        />
                       </FormGroup>
                     </Col>
                     <Col className="pl-1" md="6">
@@ -102,14 +106,18 @@ function User() {
                     <Col className="pl-1" md="6">
                       <FormGroup>
                         <label>Zakład</label>
-                        <Input type="email" value={userData.department} disabled />
+                        <Input
+                          type="text"
+                          value={userData.department}
+                          disabled
+                        />
                       </FormGroup>
                     </Col>
                   </Row>
-                  
-                    <div className="text-center mt-3">
+
+                  <div className="text-center mt-3">
                     <Link to="/change-password">Zmień hasło</Link>
-                    </div>
+                  </div>
                 </Form>
               </CardBody>
             </Card>

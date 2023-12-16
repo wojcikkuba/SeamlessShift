@@ -27,8 +27,10 @@ export default function ChangePassword() {
     const confirmNewPassword = data.get("confirmNewPassword");
 
     if (!passwordRegex.test(newPassword)) {
-        setChangePasswordError("Hasło musi mieć co najmniej 8 znaków, jedną cyfrę i jedną dużą literę.");
-        return;
+      setChangePasswordError(
+        "Hasło musi mieć co najmniej 8 znaków, jedną cyfrę i jedną dużą literę."
+      );
+      return;
     }
 
     if (newPassword !== confirmNewPassword) {
@@ -46,7 +48,9 @@ export default function ChangePassword() {
 
     AuthService.changePassword(changePasswordData)
       .then(() => {
-        console.log("Hasło zostało pomyślnie zmienione. Za chwilę zostaniesz wylogowany.");
+        console.log(
+          "Hasło zostało pomyślnie zmienione. Za chwilę zostaniesz wylogowany."
+        );
         setChangePasswordSuccess(true);
         setChangePasswordError(false);
       })
@@ -76,7 +80,8 @@ export default function ChangePassword() {
               )}
               {changePasswordSuccess && (
                 <Alert color="success">
-                  Hasło zostało pomyślnie zmienione! Za chwilę zostaniesz wylogowany.
+                  Hasło zostało pomyślnie zmienione! Za chwilę zostaniesz
+                  wylogowany.
                 </Alert>
               )}
               <form onSubmit={handleSubmit}>

@@ -26,8 +26,12 @@ function ManageSubjects() {
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [noData, setNoData] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(location?.state?.selectedDate || "");
-  const [selectedUser, setSelectedUser] = useState(location?.state?.selectedUser || "");
+  const [selectedDate, setSelectedDate] = useState(
+    location?.state?.selectedDate || ""
+  );
+  const [selectedUser, setSelectedUser] = useState(
+    location?.state?.selectedUser || ""
+  );
   const [users, setUsers] = useState([]);
   const [showTable, setShowTable] = useState(false);
 
@@ -69,12 +73,15 @@ function ManageSubjects() {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/subject/${userId}/${date}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:5000/subject/${userId}/${date}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -121,10 +128,12 @@ function ManageSubjects() {
 
   const handleEditClick = (subjectId) => {
     navigate(`/admin/edit-subject/${subjectId}`);
-  }
+  };
 
   const handleDeleteClick = async (subjectId) => {
-    const shouldDelete = window.confirm("Czy na pewno chcesz usunąć ten przedmiot?");
+    const shouldDelete = window.confirm(
+      "Czy na pewno chcesz usunąć ten przedmiot?"
+    );
 
     if (!shouldDelete) {
       return;
@@ -132,19 +141,21 @@ function ManageSubjects() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/subject/${subjectId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:5000/subject/${subjectId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Usunięcie przedmiotu z lokalnych danych
       setTableData((prevTableData) =>
         prevTableData.filter((subject) => subject.id !== subjectId)
       );
@@ -152,7 +163,9 @@ function ManageSubjects() {
         prevFilteredData.filter((subject) => subject.id !== subjectId)
       );
 
-      const hasSubjects = filteredData.some((subject) => subject.id !== subjectId);
+      const hasSubjects = filteredData.some(
+        (subject) => subject.id !== subjectId
+      );
 
       if (hasSubjects) {
         console.log(`Subject with ID ${subjectId} deleted successfully!`);
@@ -163,6 +176,20 @@ function ManageSubjects() {
     } catch (error) {
       console.error("Error deleting subject:", error);
     }
+  };
+
+  const translateDayOfWeek = (dayOfWeek) => {
+    const daysOfWeek = {
+      Monday: "Poniedziałek",
+      Tuesday: "Wtorek",
+      Wednesday: "Środa",
+      Thursday: "Czwartek",
+      Friday: "Piątek",
+      Saturday: "Sobota",
+      Sunday: "Niedziela",
+    };
+
+    return daysOfWeek[dayOfWeek] || dayOfWeek;
   };
 
   return (
@@ -221,7 +248,7 @@ function ManageSubjects() {
                       ? "Brak zajęć danego użytkownika w wybranym dniu"
                       : "Brak zajęć do wyświetlenia"}
                   </p>
-                ) : showTable ? ( 
+                ) : showTable ? (
                   <>
                     <Table responsive bordered className="text-center">
                       <thead className="text-primary">
@@ -239,13 +266,19 @@ function ManageSubjects() {
                         {filteredData.map((subject, rowIndex) => (
                           <tr key={rowIndex}>
                             <td>{subject.course.name}</td>
-                            <td>{`${subject.start.slice(0,5)} - ${subject.end.slice(0,5)}`}</td>
-                            <td>{subject.day}</td>
+                            <td>{`${subject.start.slice(
+                              0,
+                              5
+                            )} - ${subject.end.slice(0, 5)}`}</td>
+                            <td>{translateDayOfWeek(subject.day)}</td>
                             <td>{subject.classroom}</td>
                             <td>{subject.subject_type.type}</td>
                             <td>{subject.description}</td>
                             <td className="text-center">
-                              <Button color="danger" onClick={() => handleDeleteClick(subject.id)}>
+                              <Button
+                                color="danger"
+                                onClick={() => handleDeleteClick(subject.id)}
+                              >
                                 Usuń
                               </Button>
                               <Button
@@ -263,12 +296,12 @@ function ManageSubjects() {
                   </>
                 ) : null}
                 <Row>
-                      <Link to='/admin/add-subject'>
-                        <Button color="primary" className="ml-2">
-                          Dodaj zajęcia
-                        </Button>
-                      </Link>
-                    </Row>
+                  <Link to="/admin/add-subject">
+                    <Button color="primary" className="ml-3">
+                      Dodaj zajęcia
+                    </Button>
+                  </Link>
+                </Row>
               </CardBody>
             </Card>
           </Col>

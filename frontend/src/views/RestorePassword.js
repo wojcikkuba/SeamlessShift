@@ -8,7 +8,9 @@ export default function RestorePassword() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setMessage("");
+    setMessage(
+      "Jeżeli podany adres e-mail istnieje w systemie, zostanie wysłana wiadomość z hasłem tymczasowym"
+    );
 
     try {
       const response = await fetch("http://localhost:5000/restore-password", {
@@ -18,16 +20,12 @@ export default function RestorePassword() {
       });
 
       if (response.ok) {
-        setMessage("Hasło czasowe zostało wysłane");
         setTimeout(() => {
           navigate("/login");
         }, 3000);
-      } else {
-        setMessage("Wystąpił błąd. Spróbuj ponownie.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Wystąpił błąd. Spróbuj ponownie.");
     }
   };
 
@@ -41,7 +39,7 @@ export default function RestorePassword() {
             </div>
             <div className="card-body">
               {message && (
-                <div className="alert alert-danger text-center" role="alert">
+                <div className="alert alert-success text-center" role="alert">
                   {message}
                 </div>
               )}

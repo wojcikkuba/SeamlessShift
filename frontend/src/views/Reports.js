@@ -111,7 +111,6 @@ function Reports() {
     const userName = `${userData.firstName} ${userData.lastName}`;
     const userEmail = userData.email;
 
-    // Tworzymy dane do eksportu
     const exportData = [
       [
         "Imię",
@@ -135,18 +134,14 @@ function Reports() {
       ],
     ];
 
-    // Tworzymy nowy arkusz
     const ws = XLSX.utils.aoa_to_sheet(exportData);
 
-    // Tworzymy nowy skoroszyt
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Raport");
 
-    // Zapisujemy plik Excela
     XLSX.writeFile(wb, `Raport_${userName}_${userEmail}.xlsx`);
   };
 
-  // Funkcja do formatowania daty
   const formatDate = (date) => {
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     return new Intl.DateTimeFormat("pl-PL", options).format(date);
@@ -156,7 +151,6 @@ function Reports() {
     console.log("userRequests:", userRequests);
     console.log("userReplacements:", userReplacements);
 
-    // Liczymy liczbę próśb, na które ktoś odpowiedział
     const answeredRequests = userRequests.filter(
       (request) => request.status !== "Requested"
     );

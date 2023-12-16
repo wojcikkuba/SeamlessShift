@@ -151,14 +151,34 @@ function EditSubject() {
     fetchSubjectTypes();
   }, [subjectId, token]);
 
+  const validateFields = () => {
+    const {
+      description,
+      start,
+      end,
+      classroom,
+      date,
+      day,
+      user_id,
+      course_id,
+      subject_type_id,
+    } = subjectData;
+
+    const isFormValid =
+      description !== "" &&
+      start !== "" &&
+      end !== "" &&
+      classroom !== "" &&
+      date !== "" &&
+      day !== "" &&
+      user_id !== "" &&
+      course_id !== "" &&
+      subject_type_id !== "";
+
+    setIsSaveButtonDisabled(!isFormValid);
+  };
+
   useEffect(() => {
-    const validateFields = () => {
-      // Add validation logic if needed
-      const isFormValid = true; // Replace with the actual validation condition
-
-      setIsSaveButtonDisabled(!isFormValid);
-    };
-
     validateFields();
   }, [subjectData]);
 

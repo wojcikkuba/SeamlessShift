@@ -13,6 +13,7 @@ import {
   Col,
   Spinner,
 } from "reactstrap";
+import { Link } from "react-router-dom";
 
 function AddSubject() {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,7 @@ function AddSubject() {
   const [subjectTypes, setSubjectTypes] = useState([]);
   const [newCourseName, setNewCourseName] = useState("");
   const [isSuccessMessageVisible, setIsSuccessMessageVisible] = useState(false);
+  const [formError, setFormError] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -130,7 +132,7 @@ function AddSubject() {
 
   const handleNewCourseInputChange = (e) => {
     setNewCourseName(e.target.value);
-  }
+  };
 
   const handleAddNewCourse = async () => {
     try {
@@ -163,23 +165,35 @@ function AddSubject() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+
+    if (
+      formData.course_id === "" ||
+      formData.user_id === "" ||
+      formData.start === "" ||
+      formData.end === "" ||
+      formData.classroom === "" ||
+      formData.description === "" ||
+      formData.start_date === "" ||
+      formData.end_date === "" ||
+      formData.subject_type_id === ""
+    ) {
+      setFormError("Wszystkie pola formularza są wymagane.");
+      return;
+    }
 
     try {
       const token = localStorage.getItem("token");
-
-      // Ustawienie pola 'day' na podstawie daty rozpoczęcia okresu
-      const startDayOfWeek = new Date(formData.start_date).toLocaleString("pl-pl", { weekday: "long" });
+      const startDayOfWeek = new Date(formData.start_date).toLocaleString(
+        "pl-pl",
+        { weekday: "long" }
+      );
       setFormData((prevFormData) => ({
         ...prevFormData,
         day: startDayOfWeek,
       }));
 
-      // Usunięcie niepotrzebnych pól
       const { date, ...requestData } = formData;
-
       const { start_date, end_date, ...finalData } = requestData;
-
       const apiUrl = `http://localhost:5000/subject/start/${start_date}/end/${end_date}`;
 
       const response = await fetch(apiUrl, {
@@ -196,18 +210,38 @@ function AddSubject() {
       }
 
       console.log("Nowe zajęcia zostały dodane pomyślnie.");
+
+      setIsSuccessMessageVisible(true);
+      setIsLoading(false);
+      clearForm();
     } catch (error) {
       console.error("Błąd dodawania zajęć:", error);
-    } finally {
       setIsLoading(false);
     }
+  };
+
+  const clearForm = () => {
+    setFormData({
+      description: "",
+      start: "",
+      end: "",
+      classroom: "",
+      date: "",
+      day: "Monday",
+      user_id: "",
+      course_id: "",
+      subject_type_id: 1,
+      visible: true,
+      start_date: "",
+      end_date: "",
+    });
   };
 
   useEffect(() => {
     if (isSuccessMessageVisible) {
       const timeoutId = setTimeout(() => {
         setIsSuccessMessageVisible(false);
-      }, 5000)
+      }, 5000);
 
       return () => clearTimeout(timeoutId);
     }
@@ -395,7 +429,10 @@ function AddSubject() {
                   </Button>
                   <Row>
                     <Col md={6}>
-                      <p className="mt-2"><b>Uwaga! </b>Jeżeli przedmiotu, którego szukasz nie ma na liście, wpisz poniżej nazwę nowego kursu</p>
+                      <p className="mt-2">
+                        <b>Uwaga! </b>Jeżeli przedmiotu, którego szukasz nie ma
+                        na liście, wpisz poniżej nazwę nowego kursu
+                      </p>
                     </Col>
                   </Row>
                   <Row>
@@ -413,11 +450,19 @@ function AddSubject() {
                     </Col>
                   </Row>
                   <Row>
-                    <Col md={6}>
-                      <Button color="primary" onClick={handleAddNewCourse}>
-                        Zapisz nowy przedmiot
+                    <Link to="/admin/manage-subjects">
+                      <Button color="secondary" className="ml-3">
+                        Powrót
                       </Button>
-                    </Col>
+                    </Link>
+
+                    <Button
+                      color="primary"
+                      className="ml-2"
+                      onClick={handleAddNewCourse}
+                    >
+                      Zapisz nowy przedmiot
+                    </Button>
                   </Row>
                   {isSuccessMessageVisible && (
                     <Row>
@@ -425,6 +470,13 @@ function AddSubject() {
                         <div className="alert alert-success">
                           Przedmiot został dodany pomyślnie!
                         </div>
+                      </Col>
+                    </Row>
+                  )}
+                  {formError && (
+                    <Row>
+                      <Col md={6}>
+                        <div className="alert alert-danger">{formError}</div>
                       </Col>
                     </Row>
                   )}
