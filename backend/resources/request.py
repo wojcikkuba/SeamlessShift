@@ -51,7 +51,7 @@ class RequestResource(MethodView):
         db.session.commit()
         return {"message": "Request deleted"}
 
-@blp.route("/request/<int:user_id>")
+@blp.route("/request/user/<int:user_id>")
 class RequestByUser(MethodView):
     @jwt_required()
     @blp.response(200, RequestSchema(many=True))

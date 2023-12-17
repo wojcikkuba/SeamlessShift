@@ -32,11 +32,17 @@ def create_app():
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
+    # app.config['MYSQL_CHARSET'] = 'utf8mb4'
     app.config['SQLALCHEMY_POOL_TIMEOUT'] = 300
     # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:password@172.17.0.2/shift_db?charset=utf8mb4"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ECHO'] = True
     app.config["JWT_SECRET_KEY"] = "secret"
+    # app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    #     'connect_args': {
+    #         'charset': 'utf8mb4'
+    #     }
+    # }
 
     db.init_app(app)
     api = Api(app)

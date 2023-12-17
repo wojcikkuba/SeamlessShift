@@ -13,7 +13,7 @@ import {
   Col,
   Spinner,
 } from "reactstrap";
-import PanelHeader from "components/PanelHeader/PanelHeader.js";
+import { Link } from "react-router-dom";
 
 function AddSubject() {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +34,9 @@ function AddSubject() {
   const [users, setUsers] = useState([]);
   const [courses, setCourses] = useState([]);
   const [subjectTypes, setSubjectTypes] = useState([]);
+  const [newCourseName, setNewCourseName] = useState("");
+  const [isSuccessMessageVisible, setIsSuccessMessageVisible] = useState(false);
+  const [formError, setFormError] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -127,25 +130,70 @@ function AddSubject() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const handleNewCourseInputChange = (e) => {
+    setNewCourseName(e.target.value);
+  };
 
+  const handleAddNewCourse = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      // Ustawienie pola 'day' na podstawie daty rozpoczęcia okresu
-      const startDayOfWeek = new Date(formData.start_date).toLocaleString("pl-pl", { weekday: "long" });
+      if (newCourseName.trim() === "") {
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: newCourseName }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setIsSuccessMessageVisible(true);
+      setNewCourseName("");
+      fetchCourses();
+    } catch (error) {
+      console.error("Błąd dodawania nowego przedmiotu:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      formData.course_id === "" ||
+      formData.user_id === "" ||
+      formData.start === "" ||
+      formData.end === "" ||
+      formData.classroom === "" ||
+      formData.description === "" ||
+      formData.start_date === "" ||
+      formData.end_date === "" ||
+      formData.subject_type_id === ""
+    ) {
+      setFormError("Wszystkie pola formularza są wymagane.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const startDayOfWeek = new Date(formData.start_date).toLocaleString(
+        "pl-pl",
+        { weekday: "long" }
+      );
       setFormData((prevFormData) => ({
         ...prevFormData,
         day: startDayOfWeek,
       }));
 
-      // Usunięcie niepotrzebnych pól
       const { date, ...requestData } = formData;
-
       const { start_date, end_date, ...finalData } = requestData;
-
       const apiUrl = `http://localhost:5000/subject/start/${start_date}/end/${end_date}`;
 
       const response = await fetch(apiUrl, {
@@ -162,16 +210,45 @@ function AddSubject() {
       }
 
       console.log("Nowe zajęcia zostały dodane pomyślnie.");
+
+      setIsSuccessMessageVisible(true);
+      setIsLoading(false);
+      clearForm();
     } catch (error) {
       console.error("Błąd dodawania zajęć:", error);
-    } finally {
       setIsLoading(false);
     }
   };
 
+  const clearForm = () => {
+    setFormData({
+      description: "",
+      start: "",
+      end: "",
+      classroom: "",
+      date: "",
+      day: "Monday",
+      user_id: "",
+      course_id: "",
+      subject_type_id: 1,
+      visible: true,
+      start_date: "",
+      end_date: "",
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccessMessageVisible) {
+      const timeoutId = setTimeout(() => {
+        setIsSuccessMessageVisible(false);
+      }, 5000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isSuccessMessageVisible]);
+
   return (
     <>
-      <PanelHeader size="sm" />
       <div className="content">
         <Row>
           <Col xs={12}>
@@ -184,82 +261,25 @@ function AddSubject() {
                   <Row>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="description">Opis</Label>
+                        <Label for="course_id">Nazwa przedmiotu</Label>
                         <Input
-                          type="text"
-                          id="description"
-                          name="description"
-                          value={formData.description}
+                          type="select"
+                          id="course_id"
+                          name="course_id"
+                          value={formData.course_id}
                           onChange={handleInputChange}
-                        />
+                        >
+                          <option value="" disabled>
+                            Wybierz nazwę przedmiotu
+                          </option>
+                          {courses.map((course) => (
+                            <option key={course.id} value={course.id}>
+                              {course.name}
+                            </option>
+                          ))}
+                        </Input>
                       </FormGroup>
                     </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="start">Godzina rozpoczęcia</Label>
-                        <Input
-                          type="time"
-                          id="start"
-                          name="start"
-                          value={formData.start}
-                          onChange={handleInputChange}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="end">Godzina zakończenia</Label>
-                        <Input
-                          type="time"
-                          id="end"
-                          name="end"
-                          value={formData.end}
-                          onChange={handleInputChange}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="classroom">Sala</Label>
-                        <Input
-                          type="text"
-                          id="classroom"
-                          name="classroom"
-                          value={formData.classroom}
-                          onChange={handleInputChange}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="start_date">Data rozpoczęcia okresu</Label>
-                        <Input
-                          type="date"
-                          id="start_date"
-                          name="start_date"
-                          value={formData.start_date}
-                          onChange={handleInputChange}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="end_date">Data zakończenia okresu</Label>
-                        <Input
-                          type="date"
-                          id="end_date"
-                          name="end_date"
-                          value={formData.end_date}
-                          onChange={handleInputChange}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
                     <Col md={6}>
                       <FormGroup>
                         <Label for="user_id">Prowadzący</Label>
@@ -281,25 +301,83 @@ function AddSubject() {
                         </Input>
                       </FormGroup>
                     </Col>
+                  </Row>
+                  <Row>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="course_id">Nazwa przedmiotu</Label>
+                        <Label for="start">Godzina rozpoczęcia</Label>
                         <Input
-                          type="select"
-                          id="course_id"
-                          name="course_id"
-                          value={formData.course_id}
+                          type="time"
+                          id="start"
+                          name="start"
+                          value={formData.start}
                           onChange={handleInputChange}
-                        >
-                          <option value="" disabled>
-                            Wybierz nazwę przedmiotu
-                          </option>
-                          {courses.map((course) => (
-                            <option key={course.id} value={course.id}>
-                              {course.name}
-                            </option>
-                          ))}
-                        </Input>
+                        />
+                      </FormGroup>
+                    </Col>
+
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="end">Godzina zakończenia</Label>
+                        <Input
+                          type="time"
+                          id="end"
+                          name="end"
+                          value={formData.end}
+                          onChange={handleInputChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="classroom">Sala</Label>
+                        <Input
+                          type="text"
+                          id="classroom"
+                          name="classroom"
+                          value={formData.classroom}
+                          onChange={handleInputChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="description">Opis</Label>
+                        <Input
+                          type="text"
+                          id="description"
+                          name="description"
+                          value={formData.description}
+                          onChange={handleInputChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="start_date">Data rozpoczęcia kursu</Label>
+                        <Input
+                          type="date"
+                          id="start_date"
+                          name="start_date"
+                          value={formData.start_date}
+                          onChange={handleInputChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="end_date">Data zakończenia kursu</Label>
+                        <Input
+                          type="date"
+                          id="end_date"
+                          name="end_date"
+                          value={formData.end_date}
+                          onChange={handleInputChange}
+                        />
                       </FormGroup>
                     </Col>
                   </Row>
@@ -325,8 +403,6 @@ function AddSubject() {
                         </Input>
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
                     <Col md={6}>
                       <FormGroup>
                         <Label for="day">Dzień tygodnia</Label>
@@ -351,6 +427,59 @@ function AddSubject() {
                   <Button color="primary" type="submit" disabled={isLoading}>
                     {isLoading ? <Spinner size="sm" /> : "Dodaj zajęcia"}
                   </Button>
+                  <Row>
+                    <Col md={6}>
+                      <p className="mt-2">
+                        <b>Uwaga! </b>Jeżeli przedmiotu, którego szukasz nie ma
+                        na liście, wpisz poniżej nazwę nowego kursu
+                      </p>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="newCourseName">Nowy przedmiot</Label>
+                        <Input
+                          type="text"
+                          id="newCourseName"
+                          name="newCourseName"
+                          value={newCourseName}
+                          onChange={handleNewCourseInputChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Link to="/admin/manage-subjects">
+                      <Button color="secondary" className="ml-3">
+                        Powrót
+                      </Button>
+                    </Link>
+
+                    <Button
+                      color="primary"
+                      className="ml-2"
+                      onClick={handleAddNewCourse}
+                    >
+                      Zapisz nowy przedmiot
+                    </Button>
+                  </Row>
+                  {isSuccessMessageVisible && (
+                    <Row>
+                      <Col md={6}>
+                        <div className="alert alert-success">
+                          Przedmiot został dodany pomyślnie!
+                        </div>
+                      </Col>
+                    </Row>
+                  )}
+                  {formError && (
+                    <Row>
+                      <Col md={6}>
+                        <div className="alert alert-danger">{formError}</div>
+                      </Col>
+                    </Row>
+                  )}
                 </Form>
               </CardBody>
             </Card>

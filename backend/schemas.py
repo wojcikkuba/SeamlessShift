@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 class PlainRoleSchema(Schema):
@@ -24,7 +24,6 @@ class PlainSubjectTypeSchema(Schema):
 class PlainUserSchema(Schema):
     id = fields.Int(dump_only=True)
     email = fields.Str(required=True)
-    password = fields.Str(required=True, load_only=True)
 
 
 class PlainSubjectSchema(Schema):
@@ -54,7 +53,7 @@ class UserSchema(PlainUserSchema):
     lastName = fields.Str(required=True)
     phone = fields.Str(required=True)
     deleted = fields.Bool(required=True)
-    password_change_required = fields.Bool(required=True)
+    password_change_required = fields.Bool(missing=True)
 
     facility_id = fields.Int(required=True)
     facility = fields.Nested(PlainFacilitySchema(), dump_only=True)
@@ -63,6 +62,22 @@ class UserSchema(PlainUserSchema):
     role = fields.Nested(PlainRoleSchema(), dump_only=True)
 
     # subjects = fields.List(fields.Nested(PlainSubjectSchema()), dump_only=True)
+
+
+class LoginSchema(Schema):
+    email = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
+
+
+class PasswordChangeSchema(Schema):
+    email = fields.Email(required=True)
+    old_password = fields.String(required=True)
+    new_password = fields.String(
+        required=True, validate=validate.Length(min=8))
+
+
+class PasswordRestoreSchema(Schema):
+    email = fields.Email(required=True)
 
 
 class SubjectSchema(PlainSubjectSchema):

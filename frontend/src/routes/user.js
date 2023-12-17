@@ -1,14 +1,9 @@
-import Dashboard from "views/Dashboard.js";
-import Notifications from "views/Notifications.js";
-import Icons from "views/Icons.js";
 import Schedule from "views/Schedule";
 import UserPage from "views/UserPage.js";
 import MyClasses from "views/MyClasses.js";
 import AddRequest from "views/AddRequest";
 import CurrentRequests from "views/CurrentRequests";
-import ManageUsers from "views/ManageUsers";
-import ManageSubjects from "views/ManageSubjects";
-
+import Reports from "views/Reports";
 
 var dashRoutes = [
   {
@@ -47,39 +42,10 @@ var dashRoutes = [
     layout: "/user",
   },
   {
-    path: "/manage-users",
-    name: "Zarządzanie użytkownikami",
-    icon: "users_single-02",
-    component: <ManageUsers />,
-    layout: "/user",
-  },
-  {
-    path: "/manage-courses",
-    name: "Zarządzanie planem",
-    icon: "users_single-02",
-    component: <ManageSubjects />,
-    layout: "/user",
-  },
-  {
-    //path: "/dashboard",
-    path: '#',
-    name: "Dashboard",
-    icon: "design_app",
-    component: <Dashboard />,
-    layout: "/user",
-  },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "design_image",
-    component: <Icons />,
-    layout: "/user",
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "ui-1_bell-53",
-    component: <Notifications />,
+    path: "/reports",
+    name: "Raporty",
+    icon: "business_chart-bar-32",
+    component: <Reports />,
     layout: "/user",
   },
 

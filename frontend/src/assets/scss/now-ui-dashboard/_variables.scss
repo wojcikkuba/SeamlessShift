@@ -1,6 +1,4 @@
 //== Buttons
-//
-//## For each of Bootstrap's buttons, define text, background and border color.
 
 $sans-serif-family:          'Montserrat', 'Helvetica Neue',  Arial, sans-serif;
 
@@ -115,9 +113,6 @@ $padding-large-horizontal:     48px !default;
 $padding-small-vertical:        5px !default;
 $padding-small-horizontal:     15px !default;
 
-// $padding-xs-vertical:           1px !default;
-// $padding-xs-horizontal:         5px !default;
-
 $padding-label-vertical:        2px !default;
 $padding-label-horizontal:     12px !default;
 
@@ -148,12 +143,12 @@ $btn-icon-size-small:           1.875rem     !default;
 $btn-icon-font-size-lg:         1.325rem     !default;
 $btn-icon-size-lg:              3.6rem         !default;
 
-$font-size-h1:                 3.5em        !default; // ~ 49px
-$font-size-h2:                 2.5em        !default; // ~ 35px
-$font-size-h3:                 2em          !default; // ~ 28px
-$font-size-h4:                 1.714em      !default; // ~ 24px
-$font-size-h5:                 1.57em       !default; // ~ 22px
-$font-size-h6:                 1em          !default; // ~ 14px
+$font-size-h1:                 3.5em        !default;
+$font-size-h2:                 2.5em        !default;
+$font-size-h3:                 2em          !default;
+$font-size-h4:                 1.714em      !default;
+$font-size-h5:                 1.57em       !default;
+$font-size-h6:                 1em          !default;
 
 $font-paragraph:               1em          !default;
 $font-size-navbar:             1em          !default;
@@ -162,7 +157,7 @@ $font-size-small:              0.8571em     !default;
 $font-size-base:               14px         !default;
 $font-size-large:              1em          !default;
 $font-size-large-navbar:       20px         !default;
-$font-size-blockquote:         1.1em        !default; // ~ 15px
+$font-size-blockquote:         1.1em        !default;
 
 $font-weight-light:             300         !default;
 $font-weight-normal:            400         !default;
@@ -196,8 +191,6 @@ $transition-linear:         linear           !default;
 $transition-bezier:         cubic-bezier(0.34, 1.61, 0.7, 1) !default;
 $transition-ease:           ease 0s;
 
-
-//$navbar-padding-a:               9px 13px;
 $navbar-margin-a:                15px 0px;
 
 $padding-social-a:               10px 5px;
@@ -209,7 +202,6 @@ $navbar-padding-a-icons:         6px 15px;
 $navbar-margin-a-icons:          6px  3px;
 
 $navbar-padding-base:            0.625rem;
-//$navbar-margin-brand:             5px  0px;
 
 $navbar-margin-brand-icons:      12px auto;
 $navbar-margin-btn:              15px  3px;
@@ -246,57 +238,7 @@ $nc-background-color:     #eee !default;
 $nc-li-width:         (30em / 14) !default;
 $nc-padding-width:    (1em/3) !default;
 
-// Social icons color
-$social-twitter:                   #55acee !default;
-$social-twitter-state-color:       darken(#55acee, 5%) !default;
-
-$social-facebook: 			       #3b5998 !default;
-$social-facebook-state-color:      darken(#3b5998, 5%) !default;
-
-$social-google: 			       #dd4b39 !default;
-$social-google-state-color:        darken(#dd4b39, 5%) !default;
-
-$social-linkedin: 			         #0077B5 !default;
-$social-linkedin-state-color:        darken(#0077B5, 5%) !default;
 
 // Sidebar variables
 $sidebar-width:              calc(100% - 260px) !default;
 $sidebar-mini-width:         calc(100% - 80px) !default;
-
-
-// Social icons color
-$social-twitter:                   #55acee !default;
-$social-twitter-state-color:       lighten(#55acee, 6%) !default;
-
-$social-facebook: 			       #3b5998 !default;
-$social-facebook-state-color:      lighten(#3b5998, 6%) !default;
-
-$social-google: 			       #dd4b39 !default;
-$social-google-state-color:        lighten(#dd4b39, 6%) !default;
-
-$social-linkedin: 			       #0077B5 !default;
-$social-linkedin-state-color:      lighten(#0077B5, 6%) !default;
-
-$social-pinterest: 			       #cc2127 !default;
-$social-pinterest-state-color:     lighten(#cc2127, 6%) !default;
-
-$social-dribbble: 		           #ea4c89 !default;
-$social-dribbble-state-color:      lighten(#ea4c89, 6%) !default;
-
-$social-github: 		      	   #333333 !default;
-$social-github-state-color:        lighten(#333333, 6%) !default;
-
-$social-youtube: 		    	   #e52d27 !default;
-$social-youtube-state-color:       lighten(#e52d27, 6%) !default;
-
-$social-instagram: 		           #125688 !default;
-$social-instagram-state-color:     lighten(#125688, 6%) !default;
-
-$social-reddit: 		  	       #ff4500 !default;
-$social-reddit-state-color:        lighten(#ff4500, 6%) !default;
-
-$social-tumblr: 			       #35465c !default;
-$social-tumblr-state-color:        lighten(#35465c, 6%) !default;
-
-$social-behance: 			       #1769ff !default;
-$social-behance-state-color:       lighten(#1769ff, 6%) !default;

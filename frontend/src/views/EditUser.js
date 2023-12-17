@@ -18,7 +18,6 @@ import {
   firstNamePattern,
   lastNamePattern,
 } from "../utils/patterns";
-//import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function EditUser() {
   const { userId } = useParams();
@@ -104,22 +103,19 @@ function EditUser() {
   }, [userId, token]);
 
   useEffect(() => {
-    // Funkcja sprawdzająca poprawność pól
     const validateFields = () => {
       const isValidFirstName = firstNamePattern.test(userData.firstName);
       const isValidLastName = lastNamePattern.test(userData.lastName);
       const isValidEmail = emailPattern.test(userData.email);
       const isValidPhone = phonePattern.test(userData.phone);
 
-      // Sprawdzenie, czy wszystkie pola są poprawne
       const isFormValid =
         isValidFirstName && isValidLastName && isValidEmail && isValidPhone;
 
-      // Ustawienie stanu dla przycisku Zapisz zmiany
       setIsSaveButtonDisabled(!isFormValid);
     };
 
-    validateFields(); // Wywołanie funkcji przy każdej zmianie danych użytkownika
+    validateFields();
   }, [userData]);
 
   const handleEmailChange = (e) => {
@@ -142,12 +138,10 @@ function EditUser() {
     );
   };
 
-  // Aktualizacja stanu przy wyborze roli
   const handleRoleChange = (e) => {
     setUserData({ ...userData, role_id: e.target.value });
   };
 
-  // Aktualizacja stanu przy wyborze zakładu
   const handleFacilityChange = (e) => {
     setUserData({ ...userData, facility_id: e.target.value });
   };
@@ -185,15 +179,14 @@ function EditUser() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       console.log("User updated successfully!");
-      navigate('/admin/manage-users')
+      navigate("/admin/manage-users");
     } catch (error) {
-      setErrorMessage("Edycja użytkownika nie powiodła się")
+      setErrorMessage("Edycja użytkownika nie powiodła się");
     }
   };
 
   return (
     <>
-      {/*<PanelHeader size="sm" />*/}
       <div className="content">
         <Row>
           <Col xs={12}>
